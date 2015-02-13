@@ -1,16 +1,20 @@
 package com.html5parser.SimplestTreeParser;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.html5parser.InsertionModes.AfterHead;
 
 public class Parser {
 
@@ -19,15 +23,12 @@ public class Parser {
 
 	public static void main(String[] args) {
 		System.out.println("Hello World!");
-		
-		
-		
-		
-		new Parser().parse(new ByteArrayInputStream(("").getBytes()));
-		
+
+		if (args.length == 1)
+			new Parser().parse(new ByteArrayInputStream((args[0]).getBytes()));
 	}
-	
-	public void blabla(Document doc){
+
+	public void blabla(Document doc) {
 		Element el2 = doc.createElement("body");
 		doc.getElementsByTagName("html").item(0).appendChild(el2);
 	}
@@ -36,20 +37,41 @@ public class Parser {
 		Document doc = null;
 		try {
 			stream = new Decoder().ValidateEncoding(stream);
-			new Tokenizer().Tokenize(stream);
-			
-			//Stop Parsing
-			if(!ParserStacks.openElements.isEmpty())ParserStacks.openElements.clear();
-			doc = new TreeConstructor().getDOM();
-			
-			System.out.println(doc.getElementsByTagName("html").item(0).getNodeName());
+			doc = new Tokenizer().Tokenize(stream);
+
+			// Stop Parsing
+			if (!ParserStacks.openElements.isEmpty())
+				ParserStacks.openElements.clear();
+
+			printDocument(doc, System.out);
+			// System.out.println(doc.getElementsByTagName("body").item(0).getNodeName());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 		}
 
 		return doc;
 	}
-}
 
+	public static void printDocument(Document doc, OutputStream out)
+			throws IOException, TransformerException {
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer = tf.newTransformer();
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		transformer.setOutputProperty(
+				"{http://xml.apache.org/xslt}indent-amount", "4");
+
+		transformer.transform(new DOMSource(doc), new StreamResult(
+				new OutputStreamWriter(out, "UTF-8")));
+	}
+}
 // //convert String into InputStream
 // InputStream is = new ByteArrayInputStream(str.getBytes());
 //

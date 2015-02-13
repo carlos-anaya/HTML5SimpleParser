@@ -38,9 +38,9 @@ public class TreeConstructor {
 
 	public Document doc = null;
 
-	public void ProcessToken(Token token) {
-		boolean stopParsing=false;
-		while(!stopParsing){
+	public Document ProcessToken(Token token) {
+		boolean stopParsing = false;
+		while (!stopParsing) {
 			switch (Parser.currentMode) {
 			case initial:
 				new Initial().process(doc, token);
@@ -64,11 +64,6 @@ public class TreeConstructor {
 				break;
 			}
 		}
-
-	}
-
-	public Document getDOM() {
 		return doc;
 	}
-
 }

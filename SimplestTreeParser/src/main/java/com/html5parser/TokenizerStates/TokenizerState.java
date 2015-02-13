@@ -9,4 +9,6 @@ public interface TokenizerState {
 	
 	public TokenizerState nextState();
 	
+	public Token currentToken();
+	
 }

@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+import org.w3c.dom.Document;
+
 import com.html5parser.SimplestTreeParser.Token.TokenType;
 import com.html5parser.TokenizerStates.Data_state;
 import com.html5parser.TokenizerStates.TokenizerState;
@@ -21,7 +23,7 @@ public class Tokenizer {
 	 * @throws exception
 	 *             invalid stream codification error.
 	 */
-	public void Tokenize(InputStream stream) {
+	public Document Tokenize(InputStream stream) {
 		TreeConstructor treeConstructor = new TreeConstructor();
 		// BufferedReader in = new BufferedReader(new
 		// InputStreamReader(url.openStream(), "UTF-8"));
@@ -38,7 +40,7 @@ public class Tokenizer {
 
 			// EOF Procedure
 
-			treeConstructor
+			return treeConstructor
 					.ProcessToken(new Token(TokenType.end_of_file, null));
 
 			// int currentChar = 0;
@@ -78,18 +80,8 @@ public class Tokenizer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		/*
-		 * Consume the stream and generate tokens.
-		 * 
-		 * Following lines for example.
-		 */
-		// tokens.add(new Token(TokenType.start_tag, "html"));
-		// tokens.add(new Token(TokenType.start_tag, "head"));
-		// tokens.add(new Token(TokenType.end_tag, "head"));
-		// tokens.add(new Token(TokenType.start_tag, "body"));
-		// tokens.add(new Token(TokenType.end_tag, "body"));
-		// tokens.add(new Token(TokenType.end_tag, "html"));
+		
+		return null;
 
 	}
 

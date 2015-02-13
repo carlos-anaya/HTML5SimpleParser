@@ -5,30 +5,46 @@ import com.html5parser.SimplestTreeParser.Token;
 import com.html5parser.SimplestTreeParser.Token.TokenType;
 import com.html5parser.SimplestTreeParser.TreeConstructor;
 
-public class Data_state implements TokenizerState{
+public class Tag_open_state implements TokenizerState{
 
 	private TokenizerState nextState;
 	private Token currentToken;
 	
 	public void process(int currentChar, TreeConstructor treeConstructor ){
+		
+		//Uppercase ASCII
+		if(currentChar > 64 && currentChar < 91)
+		{
+			//Transfrom to the lowercase ASCII
+			currentChar +=20;
+		}
+		
+		//Lowercase ASCII
+		if (currentChar > 96 && currentChar < 123)
+		{
+		
+		}
+		else{
 		switch (currentChar) {
-		case 0x0026: // &
-			//nextState = new Character_reference_in_data_state(); 
+		case 0x0021: // !
+			//nextState = new Markup_declaration_open_state(); 
 			break;
-		case 0x003C: // <
-			//nextState = new Tag_open_state(); 
+		case 0x002F: // /
+			//nextState = new End_tag_open_state();
 			break;
-		case 0x0000: // NULL
+		case 0x003F: // ?
 			ParserStacks.parseErrors
 			.push("NULL Character encountered");
-			treeConstructor.ProcessToken(new Token(TokenType.character, String
-					.valueOf(currentChar)));			
+			//nextState = new Bogus_comment_state();
 			break;
 		default:
+			ParserStacks.parseErrors
+			.push("Invalid character");
+			nextState = new Data_state();
 			treeConstructor.ProcessToken(new Token(TokenType.character, String
-					.valueOf(currentChar)));
+					.valueOf(0x003C)));
 			break;
-		}
+		}}
 	}
 
 	
@@ -40,9 +56,4 @@ public class Data_state implements TokenizerState{
 	public Token currentToken() {
 		return currentToken;
 	}
-	
-
-	
-	
-	
 }
