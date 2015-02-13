@@ -24,8 +24,10 @@ public class Parser {
 	public static void main(String[] args) {
 		System.out.println("Hello World!");
 
-		if (args.length == 1)
-			new Parser().parse(new ByteArrayInputStream((args[0]).getBytes()));
+//		if (args.length == 1)
+//			new Parser().parse(new ByteArrayInputStream((args[0]).getBytes()));
+		String input = "<html>";
+		new Parser().parse(new ByteArrayInputStream(input.getBytes()));
 	}
 
 	public void blabla(Document doc) {

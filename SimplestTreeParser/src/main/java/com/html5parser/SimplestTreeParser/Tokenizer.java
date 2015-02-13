@@ -8,9 +8,8 @@ import java.io.UnsupportedEncodingException;
 
 import org.w3c.dom.Document;
 
-import com.html5parser.SimplestTreeParser.Token.TokenType;
 import com.html5parser.TokenizerStates.Data_state;
-import com.html5parser.TokenizerStates.TokenizerState;
+import com.html5parser.TokenizerStates.State;
 
 public class Tokenizer {
 
@@ -25,23 +24,26 @@ public class Tokenizer {
 	 */
 	public Document Tokenize(InputStream stream) {
 		TreeConstructor treeConstructor = new TreeConstructor();
+		Token currentToken = null;
 		// BufferedReader in = new BufferedReader(new
 		// InputStreamReader(url.openStream(), "UTF-8"));
 		BufferedReader in;
 		try {
 			in = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 
-			TokenizerState state = new Data_state();
+			State state = new Data_state();
 			int currentChar = 0;
 			while ((currentChar = in.read()) != -1) {
-				state.process(currentChar, treeConstructor);
+				currentToken = state.process(currentChar, treeConstructor, currentToken);
 				state = state.nextState();
 			}
 
 			// EOF Procedure
+			// Send value -1 for EOF
+			state.process(-1, treeConstructor, null);
 
-			return treeConstructor
-					.ProcessToken(new Token(TokenType.end_of_file, null));
+			// return treeConstructor
+			// .ProcessToken(new Token(TokenType.end_of_file, null));
 
 			// int currentChar = 0;
 			// while ((currentChar = in.read()) != -1) {
@@ -80,8 +82,8 @@ public class Tokenizer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return null;
+
+		return treeConstructor.ProcessToken(null);
 
 	}
 

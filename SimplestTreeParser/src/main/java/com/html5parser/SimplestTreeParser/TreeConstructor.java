@@ -39,6 +39,8 @@ public class TreeConstructor {
 	public Document doc = null;
 
 	public Document ProcessToken(Token token) {
+		if (token == null)
+			return doc;
 		boolean stopParsing = false;
 		while (!stopParsing) {
 			switch (Parser.currentMode) {

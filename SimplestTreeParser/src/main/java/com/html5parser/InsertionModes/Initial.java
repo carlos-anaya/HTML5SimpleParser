@@ -12,11 +12,21 @@ public class Initial {
 		switch (token.getType()) {
 			case DOCTYPE:
 				break;
+			
+			// A comment token
+			// Append a Comment node to the Document object with the data attribute set to the data given in the comment token.
 			case comment:
-				//doc.appendChild(doc.createComment(token.getValue()));
+				doc.appendChild(doc.createComment(token.getValue()));
 				break;
+			
+			// A character token that is one of U+0009 CHARACTER TABULATION, "LF" (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
+			// Ignore the token.
 			case character:
 				break;
+				
+			// Anything else
+			// If the document is not an iframe srcdoc document, then this is a parse error; set the Document to quirks mode.
+			// In any case, switch the insertion mode to "before html", then reprocess the current token.
 			case end_of_file:
 			case start_tag:
 			case end_tag:
