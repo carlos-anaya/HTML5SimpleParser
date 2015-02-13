@@ -1,12 +1,17 @@
 package com.html5parser.SimplestTreeParser;
 
-import java.util.List;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+
+import com.html5parser.InsertionModes.AfterHead;
+import com.html5parser.InsertionModes.BeforeHTML;
+import com.html5parser.InsertionModes.BeforeHead;
+import com.html5parser.InsertionModes.InBody;
+import com.html5parser.InsertionModes.InHead;
+import com.html5parser.InsertionModes.Initial;
 
 public class TreeConstructor {
 
@@ -19,9 +24,8 @@ public class TreeConstructor {
 	 * @throws Exception
 	 *             invalid token.
 	 */
-	public Document ConstructDOM(List<Token> tokens) {
 
-		Document doc = null;
+	public TreeConstructor() {
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = dbf.newDocumentBuilder();
@@ -30,6 +34,40 @@ public class TreeConstructor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public Document doc = null;
+
+	public void ProcessToken(Token token) {
+		boolean stopParsing=false;
+		while(!stopParsing){
+			switch (Parser.currentMode) {
+			case initial:
+				new Initial().process(doc, token);
+				break;
+			case before_html:
+				new BeforeHTML().process(doc, token);
+				break;
+			case before_head:
+				new BeforeHead().process(doc, token);
+				break;
+			case in_head:
+				new InHead().process(doc, token);
+				break;
+			case after_head:
+				new AfterHead().process(doc, token);
+				break;
+			case in_body:
+				stopParsing = new InBody().process(doc, token);
+				break;
+			default:
+				break;
+			}
+		}
+
+	}
+
+	public Document getDOM() {
 		return doc;
 	}
 
