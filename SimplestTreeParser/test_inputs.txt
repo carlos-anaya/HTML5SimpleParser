@@ -1,0 +1,34 @@
+**** Inputs that produce the Basic tree
+ 
+--(empty string)
+
+
+--      (spaces)
+
+
+--(unclosed tags)  
+<x 	(x -> any character)
+<html
+<html/
+<head/	
+<body/
+<html/><xx
+
+ 
+--(single tags)
+<html> 	or	<head>	or	<body>
+
+ 
+--(single closing tags) 
+<html/>	or	<head/>	or	<body/>
+
+
+--(nested tags)
+<html><head><body>
+<html><body>
+<head><body><html/>
+
+ 
+--(html followed by spaces)
+<html>             
+<html>      <head><body><html/>
