@@ -38,26 +38,24 @@ public class TreeConstructor {
 
 	public Document doc = null;
 
-	public Document ProcessToken(Token token) {
-		if (token == null)
-			return doc;
+	public void processToken(Token token) {
 		boolean stopParsing = false;
-		while (!stopParsing) {
+		//while (!stopParsing) {
 			switch (Parser.currentMode) {
 			case initial:
-				new Initial().process(doc, token);
+				new Initial().process(doc, token, this);
 				break;
 			case before_html:
-				new BeforeHTML().process(doc, token);
+				new BeforeHTML().process(doc, token, this);
 				break;
 			case before_head:
-				new BeforeHead().process(doc, token);
+				new BeforeHead().process(doc, token, this);
 				break;
 			case in_head:
-				new InHead().process(doc, token);
+				new InHead().process(doc, token, this);
 				break;
 			case after_head:
-				new AfterHead().process(doc, token);
+				new AfterHead().process(doc, token, this);
 				break;
 			case in_body:
 				stopParsing = new InBody().process(doc, token);
@@ -65,7 +63,10 @@ public class TreeConstructor {
 			default:
 				break;
 			}
-		}
+		//}		
+	}
+	
+	public Document getDocument(){
 		return doc;
 	}
 }

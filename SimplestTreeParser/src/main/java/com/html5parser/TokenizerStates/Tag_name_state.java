@@ -2,13 +2,15 @@ package com.html5parser.TokenizerStates;
 
 import com.html5parser.SimplestTreeParser.ParserStacks;
 import com.html5parser.SimplestTreeParser.Token;
+import com.html5parser.SimplestTreeParser.TokenizerContext;
 import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class Tag_name_state implements State {
 
-	private State nextState;
-
-	public Token process(int currentChar, TreeConstructor treeConstructor, Token currentToken) {
+	public void process(TokenizerContext context) {
+		int currentChar = context.getCurrentChar();
+		TreeConstructor treeConstructor = context.getTreeConstructor();
+		Token currentToken = context.getCurrentToken();
 
 		// U+0041 LATIN CAPITAL LETTER A through to U+005A LATIN CAPITAL LETTER
 		// Z
@@ -39,8 +41,8 @@ public class Tag_name_state implements State {
 		// U+003E GREATER-THAN SIGN (>)
 		// Switch to the data state. Emit the current tag token
 		case 0x003E: // >
-			nextState = new Data_state();
-			treeConstructor.ProcessToken(currentToken);
+			context.setState(new Data_state());
+			treeConstructor.processToken(currentToken);
 			break;
 
 		// U+0000 NULL
@@ -56,8 +58,8 @@ public class Tag_name_state implements State {
 		// Parse error. Switch to the data state. Reconsume the EOF character.
 		case -1:
 			ParserStacks.parseErrors.push("Invalid character - EOF");
-			nextState = new Data_state();
-			nextState.process(-1, treeConstructor, currentToken);
+			context.setState(new Data_state());
+			context.getState().process(context);
 			break;
 
 		// Anything else
@@ -66,16 +68,12 @@ public class Tag_name_state implements State {
 		default:
 			currentToken.setValue(currentToken.getValue().concat(
 					String.valueOf(Character.toChars(currentChar))));
-			nextState = new Tag_name_state();
+			context.setState(new Tag_name_state());
 			break;
 		}
 
-		return currentToken;
 		
 	}
 
-	public State nextState() {
-		return nextState;
-	}
 
 }

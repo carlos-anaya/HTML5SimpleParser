@@ -2,14 +2,15 @@ package com.html5parser.TokenizerStates;
 
 import com.html5parser.SimplestTreeParser.ParserStacks;
 import com.html5parser.SimplestTreeParser.Token;
+import com.html5parser.SimplestTreeParser.TokenizerContext;
 import com.html5parser.SimplestTreeParser.Token.TokenType;
 import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class Tag_open_state implements State {
 
-	private State nextState;
-	
-	public Token process(int currentChar, TreeConstructor treeConstructor, Token currentToken) {
+	public void process(TokenizerContext context) {
+		int currentChar = context.getCurrentChar();
+		TreeConstructor treeConstructor = context.getTreeConstructor();
 
 		// U+0041 LATIN CAPITAL LETTER A through to U+005A LATIN CAPITAL LETTER
 		// Z
@@ -27,9 +28,10 @@ public class Tag_open_state implements State {
 		// character, then switch to the tag name state. (Don't emit the token
 		// yet; further details will be filled in before it is emitted.)
 		if (currentChar > 96 && currentChar < 123) {
-			currentToken = new Token(TokenType.start_tag,
+			Token currentToken = new Token(TokenType.start_tag,
 					String.valueOf(Character.toChars(currentChar)));
-			nextState = new Tag_name_state();
+			context.setCurrentToken(currentToken);
+			context.setState(new Tag_name_state());
 		} else {
 			switch (currentChar) {
 			// "!" (U+0021)
@@ -56,17 +58,12 @@ public class Tag_open_state implements State {
 			// SIGN character token. Reconsume the current input character.
 			default:
 				ParserStacks.parseErrors.push("Invalid character");
-				nextState = new Data_state();
-				treeConstructor.ProcessToken(new Token(TokenType.character,
+				context.setState(new Data_state());
+				treeConstructor.processToken(new Token(TokenType.character,
 						String.valueOf(0x003C)));
 				break;
 			}
 		}
-		return currentToken;
-	}
-
-	public State nextState() {
-		return nextState;
 	}
 
 }

@@ -6,10 +6,11 @@ import com.html5parser.SimplestTreeParser.InsertionMode;
 import com.html5parser.SimplestTreeParser.Parser;
 import com.html5parser.SimplestTreeParser.ParserStacks;
 import com.html5parser.SimplestTreeParser.Token;
+import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class InHead {
 
-	public void process(Document doc, Token token) {
+	public void process(Document doc, Token token, TreeConstructor treeConstructor ) {
 		switch (token.getType()) {
 		case character:
 			break;
@@ -26,13 +27,14 @@ public class InHead {
 			break;
 		case end_of_file:
 		default:
-			TokenAnythingElse();
+			TokenAnythingElse( token,  treeConstructor );
 			break;
 		}
 	}
 
-	private void TokenAnythingElse() {
+	private void TokenAnythingElse(Token token, TreeConstructor treeConstructor ) {
 		ParserStacks.openElements.pop();
 		Parser.currentMode = InsertionMode.after_head;
+		treeConstructor.processToken(token);
 	}
 }
