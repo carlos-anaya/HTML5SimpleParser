@@ -7,10 +7,11 @@ import com.html5parser.SimplestTreeParser.InsertionMode;
 import com.html5parser.SimplestTreeParser.Parser;
 import com.html5parser.SimplestTreeParser.ParserStacks;
 import com.html5parser.SimplestTreeParser.Token;
+import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class BeforeHTML {
 
-	public void process(Document doc, Token token) {
+	public void process(Document doc, Token token, TreeConstructor treeConstructor) {
 		switch (token.getType()) {
 
 		// A DOCTYPE token
@@ -34,22 +35,22 @@ public class BeforeHTML {
 			break;
 
 		case start_tag:
-			TokenStartTag(doc, token.getValue());
+			TokenStartTag(doc, token.getValue(), token,  treeConstructor);
 			break;
 
 		case end_tag:
-			TokenEndTag(doc, token.getValue());
+			TokenEndTag(doc, token.getValue(), token,  treeConstructor);
 			break;
 
 		// Anything else
 		case end_of_file:
 		default:
-			TokenAnythingElse(doc);
+			TokenAnythingElse(doc, token,  treeConstructor);
 			break;
 		}
 	}
 
-	private void TokenAnythingElse(Document doc) {
+	private void TokenAnythingElse(Document doc,Token token, TreeConstructor treeConstructor) {
 		// Create an html element. Append it to the Document object. Put this
 		// element in the stack of open elements.
 		// If the Document is being loaded as part of navigation of a browsing
@@ -62,9 +63,10 @@ public class BeforeHTML {
 		doc.appendChild(el);
 		ParserStacks.openElements.push(el);
 		Parser.currentMode = InsertionMode.before_head;
+		treeConstructor.processToken(token);
 	}
 
-	private void TokenStartTag(Document doc, String value) {
+	private void TokenStartTag(Document doc, String value,Token token, TreeConstructor treeConstructor) {
 		// A start tag whose tag name is "html"
 		// Create an element for the token in the HTML namespace. Append it to
 		// the Document object. Put this element in the stack of open elements.
@@ -80,12 +82,12 @@ public class BeforeHTML {
 		// must be passed the Document object.
 		// Switch the insertion mode to "before head".
 		if (value.equals("html")) 
-			TokenAnythingElse(doc);
+			TokenAnythingElse(doc, token,  treeConstructor);
 		else
-			TokenAnythingElse(doc);
+			TokenAnythingElse(doc, token,  treeConstructor);
 	}
 
-	private void TokenEndTag(Document doc, String value) {
+	private void TokenEndTag(Document doc, String value, Token token, TreeConstructor  treeConstructor) {
 		// An end tag whose tag name is one of: "head", "body", "html", "br"
 		// Act as described in the "anything else" entry below.
 		// Any other end tag
@@ -95,7 +97,7 @@ public class BeforeHTML {
 		case "body":
 		case "html":
 		case "br":
-			TokenAnythingElse(doc);
+			TokenAnythingElse(doc, token,  treeConstructor);
 			break;
 		default:
 			ParserStacks.parseErrors

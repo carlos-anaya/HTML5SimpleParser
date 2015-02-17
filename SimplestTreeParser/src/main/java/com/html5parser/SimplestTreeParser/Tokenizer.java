@@ -12,7 +12,9 @@ import com.html5parser.TokenizerStates.Data_state;
 import com.html5parser.TokenizerStates.State;
 
 public class Tokenizer {
-
+	
+	private TokenizerContext context = new TokenizerContext();
+	
 	/**
 	 * Tokenize a stream.
 	 * 
@@ -23,24 +25,26 @@ public class Tokenizer {
 	 *             invalid stream codification error.
 	 */
 	public Document Tokenize(InputStream stream) {
-		TreeConstructor treeConstructor = new TreeConstructor();
-		Token currentToken = null;
+		TreeConstructor treeConstructor = context.getTreeConstructor();
+		State state = context.getState();
 		// BufferedReader in = new BufferedReader(new
 		// InputStreamReader(url.openStream(), "UTF-8"));
+	
 		BufferedReader in;
 		try {
 			in = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-
-			State state = new Data_state();
+			
 			int currentChar = 0;
 			while ((currentChar = in.read()) != -1) {
-				currentToken = state.process(currentChar, treeConstructor, currentToken);
-				state = state.nextState();
+				context.setCurrentChar(currentChar);
+				state.process(context);
+				//state = state.nextState();
 			}
 
 			// EOF Procedure
 			// Send value -1 for EOF
-			state.process(-1, treeConstructor, null);
+			context.setCurrentChar(-1);
+			state.process(context);
 
 			// return treeConstructor
 			// .ProcessToken(new Token(TokenType.end_of_file, null));
@@ -83,7 +87,7 @@ public class Tokenizer {
 			e.printStackTrace();
 		}
 
-		return treeConstructor.ProcessToken(null);
+		return treeConstructor.getDocument();
 
 	}
 

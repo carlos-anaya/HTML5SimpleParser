@@ -18,8 +18,8 @@ import org.w3c.dom.Element;
 
 public class Parser {
 
-	public static InsertionMode currentMode = InsertionMode.initial;
-	public static TokenizerState currentState = TokenizerState.Data_state;
+	public static InsertionMode currentMode ;
+	public static TokenizerState currentState ;
 
 	public static void main(String[] args) {
 		System.out.println("Hello World!");
@@ -30,12 +30,12 @@ public class Parser {
 		new Parser().parse(new ByteArrayInputStream(input.getBytes()));
 	}
 
-	public void blabla(Document doc) {
-		Element el2 = doc.createElement("body");
-		doc.getElementsByTagName("html").item(0).appendChild(el2);
-	}
-
 	public Document parse(InputStream stream) {
+		
+		//Initialization
+		Parser.currentMode = InsertionMode.initial;
+		Parser.currentState = TokenizerState.Data_state;
+		
 		Document doc = null;
 		try {
 			stream = new Decoder().ValidateEncoding(stream);

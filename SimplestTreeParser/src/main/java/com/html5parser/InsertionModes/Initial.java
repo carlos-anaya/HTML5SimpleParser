@@ -5,10 +5,11 @@ import org.w3c.dom.Document;
 import com.html5parser.SimplestTreeParser.InsertionMode;
 import com.html5parser.SimplestTreeParser.Parser;
 import com.html5parser.SimplestTreeParser.Token;
+import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class Initial {
 
-	public boolean process(Document doc, Token token) {
+	public boolean process(Document doc, Token token, TreeConstructor treeConstructor) {
 		switch (token.getType()) {
 			case DOCTYPE:
 				break;
@@ -31,13 +32,13 @@ public class Initial {
 			case start_tag:
 			case end_tag:
 			default:
-				TokenAnythingElse();
-				break;
+				TokenAnythingElse( token,  treeConstructor);
 		}
 		return false;
 	}
 
-	private void TokenAnythingElse() {
+	private void TokenAnythingElse(Token token, TreeConstructor treeConstructor) {
 		Parser.currentMode = InsertionMode.before_html;
+		treeConstructor.processToken(token);
 	}
 }
