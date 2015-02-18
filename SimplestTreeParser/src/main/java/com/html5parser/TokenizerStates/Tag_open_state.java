@@ -32,6 +32,7 @@ public class Tag_open_state implements State {
 					String.valueOf(Character.toChars(currentChar)));
 			context.setCurrentToken(currentToken);
 			context.setState(new Tag_name_state());
+			System.out.println("token: "+currentToken);
 		} else {
 			switch (currentChar) {
 			// "!" (U+0021)
