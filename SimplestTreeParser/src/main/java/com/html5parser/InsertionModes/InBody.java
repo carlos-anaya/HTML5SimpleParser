@@ -32,7 +32,7 @@ public class InBody {
 	}
 
 	private void TokenEndOfFile() {
-		ParserStacks.parseErrors.push("DOCTYPE in InBody insertion mode");
+		ParserStacks.parseErrors.push("EOF");
 	}
 
 	private void TokenAnythingElse(Document doc) {

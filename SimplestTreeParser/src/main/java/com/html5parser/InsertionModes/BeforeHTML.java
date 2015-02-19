@@ -11,7 +11,8 @@ import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class BeforeHTML {
 
-	public void process(Document doc, Token token, TreeConstructor treeConstructor) {
+	public void process(Document doc, Token token,
+			TreeConstructor treeConstructor) {
 		switch (token.getType()) {
 
 		// A DOCTYPE token
@@ -32,25 +33,32 @@ public class BeforeHTML {
 		// (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
 		// Ignore the token.
 		case character:
+			if (!(token.getValue().equals(0x0009)
+					|| token.getValue().equals(0x000A)
+					|| token.getValue().equals(0x000C)
+					|| token.getValue().equals(0x000D) || token.getValue()
+					.equals(0x0020)))
+				TokenAnythingElse(doc, token, treeConstructor, true);
 			break;
 
 		case start_tag:
-			TokenStartTag(doc, token.getValue(), token,  treeConstructor);
+			TokenStartTag(doc, token, treeConstructor);
 			break;
 
 		case end_tag:
-			TokenEndTag(doc, token.getValue(), token,  treeConstructor);
+			TokenEndTag(doc, token, treeConstructor);
 			break;
 
 		// Anything else
 		case end_of_file:
 		default:
-			TokenAnythingElse(doc, token,  treeConstructor);
+			TokenAnythingElse(doc, token, treeConstructor, true);
 			break;
 		}
 	}
 
-	private void TokenAnythingElse(Document doc,Token token, TreeConstructor treeConstructor) {
+	private void TokenAnythingElse(Document doc, Token token,
+			TreeConstructor treeConstructor, boolean reprocessToken) {
 		// Create an html element. Append it to the Document object. Put this
 		// element in the stack of open elements.
 		// If the Document is being loaded as part of navigation of a browsing
@@ -63,41 +71,46 @@ public class BeforeHTML {
 		doc.appendChild(el);
 		ParserStacks.openElements.push(el);
 		Parser.currentMode = InsertionMode.before_head;
-		treeConstructor.processToken(token);
+		if (reprocessToken)
+			treeConstructor.processToken(token);
 	}
 
-	private void TokenStartTag(Document doc, String value,Token token, TreeConstructor treeConstructor) {
+	private void TokenStartTag(Document doc, Token token,
+			TreeConstructor treeConstructor) {
 		// A start tag whose tag name is "html"
 		// Create an element for the token in the HTML namespace. Append it to
 		// the Document object. Put this element in the stack of open elements.
 		// If the Document is being loaded as part of navigation of a browsing
 		// context, then: if the newly created element has a manifest attribute
-		// whose value is not the empty string, then resolve the value of that
+		// whose token.getValue() is not the empty string, then resolve the
+		// token.getValue() of that
 		// attribute to an absolute URL, relative to the newly created element,
 		// and if that is successful, run the application cache selection
 		// algorithm with the resulting absolute URL with any <fragment>
 		// component removed; otherwise, if there is no such attribute, or its
-		// value is the empty string, or resolving its value fails, run the
+		// token.getValue() is the empty string, or resolving its
+		// token.getValue() fails, run the
 		// application cache selection algorithm with no manifest. The algorithm
 		// must be passed the Document object.
 		// Switch the insertion mode to "before head".
-		if (value.equals("html")) 
-			TokenAnythingElse(doc, token,  treeConstructor);
+		if (token.getValue().equals("html"))
+			TokenAnythingElse(doc, token, treeConstructor, false);
 		else
-			TokenAnythingElse(doc, token,  treeConstructor);
+			TokenAnythingElse(doc, token, treeConstructor, true);
 	}
 
-	private void TokenEndTag(Document doc, String value, Token token, TreeConstructor  treeConstructor) {
+	private void TokenEndTag(Document doc, Token token,
+			TreeConstructor treeConstructor) {
 		// An end tag whose tag name is one of: "head", "body", "html", "br"
 		// Act as described in the "anything else" entry below.
 		// Any other end tag
 		// Parse error. Ignore the token.
-		switch (value) {
+		switch (token.getValue()) {
 		case "head":
 		case "body":
 		case "html":
 		case "br":
-			TokenAnythingElse(doc, token,  treeConstructor);
+			TokenAnythingElse(doc, token, treeConstructor, true);
 			break;
 		default:
 			ParserStacks.parseErrors

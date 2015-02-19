@@ -8,13 +8,12 @@ import java.io.UnsupportedEncodingException;
 
 import org.w3c.dom.Document;
 
-import com.html5parser.TokenizerStates.Data_state;
 import com.html5parser.TokenizerStates.State;
 
 public class Tokenizer {
-	
+
 	private TokenizerContext context = new TokenizerContext();
-	
+
 	/**
 	 * Tokenize a stream.
 	 * 
@@ -25,24 +24,28 @@ public class Tokenizer {
 	 *             invalid stream codification error.
 	 */
 	public Document Tokenize(InputStream stream) {
+		// TreeConstructor treeConstructor = context.getTreeConstructor();
+		State state = context.getState();
 		// BufferedReader in = new BufferedReader(new
 		// InputStreamReader(url.openStream(), "UTF-8"));
-	
+
 		BufferedReader in;
 		try {
 			in = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-			
+
 			int currentChar = 0;
 			while ((currentChar = in.read()) != -1) {
 				context.setCurrentChar(currentChar);
-				context.getState().process(context);
-				//state = state.nextState();
+				state = context.getState();
+				state.process(context);
+				// state = state.nextState();
 			}
 
 			// EOF Procedure
 			// Send value -1 for EOF
 			context.setCurrentChar(-1);
-			context.getState().process(context);
+			state = context.getState();
+			state.process(context);
 
 			// return treeConstructor
 			// .ProcessToken(new Token(TokenType.end_of_file, null));

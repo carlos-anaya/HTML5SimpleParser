@@ -30,12 +30,18 @@ public class Tag_name_state implements State {
 		case 0x000C: // FF
 		case 0x0020: // SPACE
 			// nextState = new Before_attribute_name_state();
+			ParserStacks.parseErrors.push(Character
+					.toString((char) currentChar)
+					+ " ("
+					+ String.valueOf(currentChar)
+					+ ") Invalid character encountered.");
+			context.setState(new Error_state());
 			break;
 
 		// "/" (U+002F)
 		// Switch to the self-closing start tag state.
 		case 0x002F: // /
-			// nextState = new Self_closing_start_tag_state();
+			context.setState(new Self_closing_start_tag_state());
 			break;
 
 		// U+003E GREATER-THAN SIGN (>)
@@ -72,8 +78,6 @@ public class Tag_name_state implements State {
 			break;
 		}
 
-		
 	}
-
 
 }

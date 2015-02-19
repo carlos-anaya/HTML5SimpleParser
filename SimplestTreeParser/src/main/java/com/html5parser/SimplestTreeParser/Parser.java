@@ -14,19 +14,17 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class Parser {
 
 	public static InsertionMode currentMode ;
+	public static InsertionMode originalMode;
 	public static TokenizerState currentState ;
 
 	public static void main(String[] args) {
-		System.out.println("Hello World!");
-
 //		if (args.length == 1)
 //			new Parser().parse(new ByteArrayInputStream((args[0]).getBytes()));
-		String input = "<html/><xx";
+		String input = "<html><head><body><xx/></body></head></html>";
 		new Parser().parse(new ByteArrayInputStream(input.getBytes()));
 	}
 
@@ -38,6 +36,7 @@ public class Parser {
 		
 		Document doc = null;
 		try {
+			System.out.print("***** Tokens:\n");
 			stream = new Decoder().ValidateEncoding(stream);
 			doc = new Tokenizer().Tokenize(stream);
 
@@ -45,8 +44,10 @@ public class Parser {
 			if (!ParserStacks.openElements.isEmpty())
 				ParserStacks.openElements.clear();
 
+			System.out.print("\n\n***** DOM:\n");
 			printDocument(doc, System.out);
 			// System.out.println(doc.getElementsByTagName("body").item(0).getNodeName());
+			System.out.print("\n\n***** ERROR LOG:\n" + ParserStacks.parseErrors);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,7 +64,7 @@ public class Parser {
 			throws IOException, TransformerException {
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer = tf.newTransformer();
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");

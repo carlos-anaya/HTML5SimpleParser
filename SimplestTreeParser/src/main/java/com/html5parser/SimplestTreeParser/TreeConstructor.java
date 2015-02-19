@@ -39,7 +39,9 @@ public class TreeConstructor {
 	public Document doc = null;
 
 	public void processToken(Token token) {
-		boolean stopParsing = false;
+		System.out.println(token.getType() + " - " + token.getValue() + " (insertion mode: " + Parser.currentMode +")");
+		
+		//boolean stopParsing = false;
 		//while (!stopParsing) {
 			switch (Parser.currentMode) {
 			case initial:
@@ -58,9 +60,11 @@ public class TreeConstructor {
 				new AfterHead().process(doc, token, this);
 				break;
 			case in_body:
-				stopParsing = new InBody().process(doc, token);
+			//stopParsing = new InBody().process(doc, token);
+			new InBody().process(doc, token);
 				break;
 			default:
+			//stopParsing = new InBody().process(doc, token);
 				break;
 			}
 		//}		

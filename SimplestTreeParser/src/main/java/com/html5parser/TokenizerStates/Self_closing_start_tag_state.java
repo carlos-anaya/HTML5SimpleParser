@@ -6,18 +6,19 @@ import com.html5parser.SimplestTreeParser.Token.TokenType;
 import com.html5parser.SimplestTreeParser.TokenizerContext;
 import com.html5parser.SimplestTreeParser.TreeConstructor;
 
-public class Data_state implements State {
+public class Self_closing_start_tag_state implements State {
 
 	public void process(TokenizerContext context) {
 		int currentChar = context.getCurrentChar();
+		Token currentToken = context.getCurrentToken();
 		TreeConstructor treeConstructor = context.getTreeConstructor();
 		switch (currentChar) {
-		// U+0026 AMPERSAND (&)
-		// Switch to the character reference in data state.
-		case 0x0026:
-			// nextState = new Character_reference_in_data_state();
-			ParserStacks.parseErrors.push("AMPERSAND (&) Character encountered.");
-			context.setState(new Error_state());
+		// U+003E GREATER-THAN SIGN (>)
+		// Set the self-closing flag of the current tag token. 
+		// Switch to the data state. Emit the current tag token.
+		case 0x003E:
+			context.setState(new Data_state());
+			treeConstructor.processToken(currentToken);
 			break;
 
 		// U+003C LESS-THAN SIGN (<)
@@ -35,17 +36,19 @@ public class Data_state implements State {
 			break;
 
 		// EOF
-		// Emit an end-of-file token.
+		// Parse error. Switch to the data state. Reconsume the EOF character.
 		case -1:
-			treeConstructor
-					.processToken(new Token(TokenType.end_of_file, null));
+			context.setState(new Data_state());
+			ParserStacks.parseErrors.push("EOF encountered.");
 			break;
 
 		// Anything else
-		// Emit the current input character as a character token.
+		// Parse error. Switch to the before attribute name state. Reconsume the character.
 		default:
-			treeConstructor.processToken(new Token(TokenType.character, String
-					.valueOf(currentChar)));
+			ParserStacks.parseErrors.push(Character.toString((char) currentChar) + " (" +  String.valueOf(currentChar) + ") Invalid character encountered.");
+			//context.setState(new Before_attribute_name_state());
+			
+			context.setState(new Error_state());
 			break;
 		}
 	}
