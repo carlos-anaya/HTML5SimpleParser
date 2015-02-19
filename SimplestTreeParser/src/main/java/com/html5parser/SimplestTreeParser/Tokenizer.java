@@ -25,8 +25,6 @@ public class Tokenizer {
 	 *             invalid stream codification error.
 	 */
 	public Document Tokenize(InputStream stream) {
-		TreeConstructor treeConstructor = context.getTreeConstructor();
-		State state = context.getState();
 		// BufferedReader in = new BufferedReader(new
 		// InputStreamReader(url.openStream(), "UTF-8"));
 	
@@ -37,14 +35,14 @@ public class Tokenizer {
 			int currentChar = 0;
 			while ((currentChar = in.read()) != -1) {
 				context.setCurrentChar(currentChar);
-				state.process(context);
+				context.getState().process(context);
 				//state = state.nextState();
 			}
 
 			// EOF Procedure
 			// Send value -1 for EOF
 			context.setCurrentChar(-1);
-			state.process(context);
+			context.getState().process(context);
 
 			// return treeConstructor
 			// .ProcessToken(new Token(TokenType.end_of_file, null));
@@ -87,7 +85,7 @@ public class Tokenizer {
 			e.printStackTrace();
 		}
 
-		return treeConstructor.getDocument();
+		return context.getTreeConstructor().getDocument();
 
 	}
 

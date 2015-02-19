@@ -26,7 +26,7 @@ public class Parser {
 
 //		if (args.length == 1)
 //			new Parser().parse(new ByteArrayInputStream((args[0]).getBytes()));
-		String input = "<html>";
+		String input = "<html/><xx";
 		new Parser().parse(new ByteArrayInputStream(input.getBytes()));
 	}
 
