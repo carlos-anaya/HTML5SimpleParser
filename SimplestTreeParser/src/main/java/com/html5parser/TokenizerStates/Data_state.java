@@ -16,7 +16,8 @@ public class Data_state implements State {
 		// Switch to the character reference in data state.
 		case 0x0026:
 			// nextState = new Character_reference_in_data_state();
-			ParserStacks.parseErrors.push("AMPERSAND (&) Character encountered.");
+			ParserStacks.parseErrors
+					.push("AMPERSAND (&) Character encountered.");
 			context.setState(new Error_state());
 			break;
 
@@ -31,7 +32,7 @@ public class Data_state implements State {
 		case 0x0000:
 			ParserStacks.parseErrors.push("NULL Character encountered.");
 			treeConstructor.processToken(new Token(TokenType.character, String
-					.valueOf(currentChar)));
+					.valueOf(Character.toChars(currentChar))));
 			break;
 
 		// EOF
@@ -45,7 +46,7 @@ public class Data_state implements State {
 		// Emit the current input character as a character token.
 		default:
 			treeConstructor.processToken(new Token(TokenType.character, String
-					.valueOf(currentChar)));
+					.valueOf(Character.toChars(currentChar))));
 			break;
 		}
 	}

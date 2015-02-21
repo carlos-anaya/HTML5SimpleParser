@@ -1,16 +1,14 @@
 package com.html5parser.InsertionModes;
 
-import org.w3c.dom.Document;
-
 import com.html5parser.SimplestTreeParser.InsertionMode;
 import com.html5parser.SimplestTreeParser.Parser;
+import com.html5parser.SimplestTreeParser.StackUpdater;
 import com.html5parser.SimplestTreeParser.Token;
 import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class Initial {
 
-	public boolean process(Document doc, Token token,
-			TreeConstructor treeConstructor) {
+	public boolean process(Token token, TreeConstructor treeConstructor) {
 		switch (token.getType()) {
 		case DOCTYPE:
 			break;
@@ -19,7 +17,7 @@ public class Initial {
 		// Append a Comment node to the Document object with the data attribute
 		// set to the data given in the comment token.
 		case comment:
-			doc.appendChild(doc.createComment(token.getValue()));
+			new StackUpdater().updateStack(token.getValue(), "comment");
 			break;
 
 		// A character token that is one of U+0009 CHARACTER TABULATION, "LF"

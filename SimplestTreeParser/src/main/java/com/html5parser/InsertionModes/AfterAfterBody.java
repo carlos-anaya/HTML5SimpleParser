@@ -7,13 +7,28 @@ import com.html5parser.SimplestTreeParser.StackUpdater;
 import com.html5parser.SimplestTreeParser.Token;
 import com.html5parser.SimplestTreeParser.TreeConstructor;
 
-public class AfterHead {
+public class AfterAfterBody {
 
-	public void process(Token token, TreeConstructor treeConstructor) {
+	public boolean process(Token token, TreeConstructor treeConstructor) {
 		switch (token.getType()) {
+
+		// A comment token
+		// Append a Comment node to the Document object with the data attribute
+		// set to the data given in the comment token.
+		case comment:
+			new StackUpdater().updateStack(token.getValue(), "comment");
+			break;
+		// An end-of-file token
+		// Stop parsing.
+		case end_of_file:
+			return true;
+			// A DOCTYPE token
+		case DOCTYPE:
+			ParserStacks.parseErrors.push("Unexpected html tag.");
+			break;
 		// A character token that is one of U+0009 CHARACTER TABULATION, "LF"
 		// (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
-		// Insert the character into the current node.
+
 		case character:
 			if (token.getValue().equals(0x0009)
 					|| token.getValue().equals(0x000A)
@@ -27,58 +42,30 @@ public class AfterHead {
 				// doc.getElementsByTagName("head").item(0)
 				// .getTextContent()
 				// + token.getValue());
-				new StackUpdater().updateStack(token.getValue(), "text");
+				ParserStacks.parseErrors.push("Unexpected html tag.");
 			} else
 				TokenAnythingElse(token, treeConstructor, true);
-			break;
-		case comment:
-			new StackUpdater().updateStack(token.getValue(), "comment");
-			break;
-		case DOCTYPE:
-			ParserStacks.parseErrors.push("DOCTYPE in InHead insertion mode");
 			break;
 		case start_tag:
 			TokenStartTag(token, treeConstructor);
 			break;
-		case end_tag:
-			TokenEndTag(token, treeConstructor);
-			break;
-		case end_of_file:
+
 		default:
 			TokenAnythingElse(token, treeConstructor, true);
 			break;
 		}
+		return false;
 	}
 
 	public void TokenAnythingElse(Token token, TreeConstructor treeConstructor,
 			boolean reprocessToken) {
-		// Element el = doc.createElement("body");
-		// doc.getElementsByTagName("html").item(0).appendChild(el);
-		// ParserStacks.openElements.push(el);
-		new StackUpdater().updateStack("body", "element");
+		ParserStacks.parseErrors.push(token.getValue()
+				+ " after InBody insertion mode");
 		Parser.currentMode = InsertionMode.in_body;
-
 		if (reprocessToken)
 			treeConstructor.processToken(token);
 	}
-
-	private void TokenEndTag(Token token, TreeConstructor treeConstructor) {
-		// An end tag whose tag name is "head"
-		// Pop the current node (which will be the head element) off the stack
-		// of open elements.
-		// Switch the insertion mode to "after head".
-		// An end tag whose tag name is one of: "body", "html", "br"
-		// Act as described in the "anything else" entry below.
-		if (token.getValue().equals("head") || token.getValue().equals("body")
-				|| token.getValue().equals("html")
-				|| token.getValue().equals("br")) {
-			TokenAnythingElse(token, treeConstructor, true);
-		} else {
-			ParserStacks.parseErrors.push(token.getValue()
-					+ " close tag in InHead insertion mode");
-		}
-	}
-
+	
 	private void TokenStartTag(Token token, TreeConstructor treeConstructor) {
 		switch (token.getValue()) {
 		// A start tag whose tag name is "html"
@@ -91,24 +78,6 @@ public class AfterHead {
 		case "html":
 			ParserStacks.parseErrors.push("Unexpected html tag.");
 			break;
-
-		// A start tag whose tag name is "body"
-		// Insert an HTML element for the token.
-		// Set the frameset-ok flag to "not ok".
-		// Switch the insertion mode to "in body".
-		case "body":
-			TokenAnythingElse(token, treeConstructor, false);
-			break;
-		// A start tag whose tag name is "frameset"
-		// Insert an HTML element for the token.
-		// Switch the insertion mode to "in frameset".
-		case "frameset":
-			ParserStacks.parseErrors.push("Unexpected frameset tag.");
-			break;
-		// A start tag whose tag name is "meta"
-		// Insert an HTML element for the token. Immediately pop the current
-		// node off the stack of open elements.
-
 		default:
 			TokenAnythingElse(token, treeConstructor, true);
 			break;

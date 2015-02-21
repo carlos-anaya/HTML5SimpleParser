@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
-import org.w3c.dom.Document;
-
 import com.html5parser.TokenizerStates.State;
 
 public class Tokenizer {
@@ -23,7 +21,7 @@ public class Tokenizer {
 	 * @throws exception
 	 *             invalid stream codification error.
 	 */
-	public Document Tokenize(InputStream stream) {
+	public void Tokenize(InputStream stream) {
 		// TreeConstructor treeConstructor = context.getTreeConstructor();
 		State state = context.getState();
 		// BufferedReader in = new BufferedReader(new
@@ -87,8 +85,6 @@ public class Tokenizer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return context.getTreeConstructor().getDocument();
 
 	}
 
