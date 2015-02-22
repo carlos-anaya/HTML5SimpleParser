@@ -9,7 +9,7 @@ public class StackUpdater {
 
 	public void updateStack(String value, String type) {
 
-		Document doc = Parser.doc;
+		Document doc = DocumentGenerator.getDocument(); //Parser.doc;
 
 		Stack<Element> elements = new Stack<Element>();
 		Element newElement;
@@ -43,10 +43,10 @@ public class StackUpdater {
 		}
 	}
 
-	public Document getDocument() {
-
-		Document doc = Parser.doc;
-		doc.appendChild(ParserStacks.openElements.firstElement());
-		return doc;
-	}
+//	public Document getDocument() {
+//
+//		Document doc = Parser.doc;
+//		doc.appendChild(ParserStacks.openElements.firstElement());
+//		return doc;
+//	}
 }

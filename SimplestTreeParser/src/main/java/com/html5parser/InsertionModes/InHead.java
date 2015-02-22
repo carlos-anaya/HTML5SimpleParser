@@ -125,8 +125,7 @@ public class InHead {
 			// parsing algorithm, switch the tokenizer to the RCDATA state.
 			// Let the original insertion mode be the current insertion mode.
 			// Then, switch the insertion mode to "text".
-			// Element el11 = doc.createElement("html");
-			// doc.appendChild(el11);
+			new StackUpdater().updateStack("title", "element");
 			Parser.originalMode = Parser.currentMode;
 			Parser.currentMode = InsertionMode.text;
 			// tokenizer to RCDATA_State

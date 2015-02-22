@@ -7,6 +7,7 @@ import com.html5parser.InsertionModes.BeforeHead;
 import com.html5parser.InsertionModes.InBody;
 import com.html5parser.InsertionModes.InHead;
 import com.html5parser.InsertionModes.Initial;
+import com.html5parser.InsertionModes.Text;
 
 public class TreeConstructor {
 
@@ -62,6 +63,10 @@ public class TreeConstructor {
 		case after_body:
 			// stopParsing = new InBody().process(token);
 			new AfterBody().process(token, this);
+			break;
+		case text:
+			// stopParsing = new InBody().process(token);
+			new Text().process(token, this);
 			break;
 		default:
 			// stopParsing = new InBody().process(token);
