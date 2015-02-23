@@ -19,7 +19,7 @@ public class RCDATA_end_tag_open_state implements State {
 		// yet; further details will be filled in before it is emitted.)
 		if (currentChar > 64 && currentChar < 91) {
 			// Transfrom to the lowercase ASCII
-			currentChar += 20;
+			currentChar += 0x0020;
 		}
 
 		// U+0061 LATIN SMALL LETTER A through to U+007A LATIN SMALL LETTER Z

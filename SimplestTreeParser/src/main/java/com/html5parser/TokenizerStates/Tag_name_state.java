@@ -19,7 +19,7 @@ public class Tag_name_state implements State {
 		// tag name.
 		if (currentChar > 64 && currentChar < 91) {
 			// Transfrom to the lowercase ASCII
-			currentChar += 20;
+			currentChar += 0x0020;
 		}
 
 		switch (currentChar) {
