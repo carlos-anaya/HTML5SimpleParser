@@ -26,7 +26,7 @@ public class Parser {
 	public static void main(String[] args) {
 		// if (args.length == 1)
 		// new Parser().parse(new ByteArrayInputStream((args[0]).getBytes()));
-		String input = "<Html><head>   </head></html>";
+		String input = "<Html>   <head></head></html>";
 		new Parser().parse(new ByteArrayInputStream(input.getBytes()));
 	}
 
@@ -52,7 +52,7 @@ public class Parser {
 			stream = new Decoder().ValidateEncoding(stream);
 			new Tokenizer().Tokenize(stream);
 			doc = DocumentGenerator.getFinalDocument(); // doc = new
-												// StackUpdater().getDocument();
+			// StackUpdater().getDocument();
 			// Stop Parsing
 			if (!ParserStacks.openElements.isEmpty())
 				ParserStacks.openElements.clear();
@@ -74,7 +74,7 @@ public class Parser {
 		return doc;
 	}
 
-	public static void printDocument(Document doc, OutputStream out)
+	private void printDocument(Document doc, OutputStream out)
 			throws IOException, TransformerException {
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer = tf.newTransformer();
@@ -88,6 +88,7 @@ public class Parser {
 		transformer.transform(new DOMSource(doc), new StreamResult(
 				new OutputStreamWriter(out, "UTF-8")));
 	}
+
 }
 // //convert String into InputStream
 // InputStream is = new ByteArrayInputStream(str.getBytes());

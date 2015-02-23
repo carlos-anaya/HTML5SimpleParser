@@ -24,11 +24,12 @@ public class Initial {
 		// (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
 		// Ignore the token.
 		case character:
-			if (!(token.getValue().equals(0x0009)
-					|| token.getValue().equals(0x000A)
-					|| token.getValue().equals(0x000C)
-					|| token.getValue().equals(0x000D) || token.getValue()
-					.equals(0x0020)))
+			int currentChar = (int)token.getValue().charAt(0);
+			if (!(currentChar == 0x0009
+					|| currentChar == 0x000A
+					|| currentChar == 0x000C
+					|| currentChar == 0x000D 
+					|| currentChar == 0x0020))
 				TokenAnythingElse(token, treeConstructor);
 			break;
 

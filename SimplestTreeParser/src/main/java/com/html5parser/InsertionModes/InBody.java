@@ -51,18 +51,22 @@ public class InBody {
 	private void characterToken(Token token) {
 		// A character token that is U+0000 NULL
 		// Parse error. Ignore the token.
-		if (token.getValue().equals(0x0000)) {
+		
+		int currentChar = (int)token.getValue().charAt(0);
+		
+		
+		if (currentChar == 0x0000) {
 			ParserStacks.parseErrors.push("Null character found");
 		}
 		// A character token that is one of U+0009 CHARACTER TABULATION, "LF"
 		// (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
 		// Reconstruct the active formatting elements, if any.
 		// Insert the token's character into the current node.
-		else if (token.getValue().equals(0x0009)
-				|| token.getValue().equals(0x000A)
-				|| token.getValue().equals(0x000C)
-				|| token.getValue().equals(0x000D)
-				|| token.getValue().equals(0x0020)) {
+		else if (currentChar == 0x0009
+				|| currentChar == 0x000A
+				|| currentChar == 0x000C
+				|| currentChar == 0x000D 
+				|| currentChar == 0x0020) {
 
 			new StackUpdater().updateStack(token.getValue(), "text");
 		}
