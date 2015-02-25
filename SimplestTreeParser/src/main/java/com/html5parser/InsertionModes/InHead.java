@@ -5,7 +5,11 @@ import com.html5parser.SimplestTreeParser.Parser;
 import com.html5parser.SimplestTreeParser.ParserStacks;
 import com.html5parser.SimplestTreeParser.StackUpdater;
 import com.html5parser.SimplestTreeParser.Token;
+import com.html5parser.SimplestTreeParser.Tokenizer;
+import com.html5parser.SimplestTreeParser.TokenizerContext;
+import com.html5parser.SimplestTreeParser.TokenizerState;
 import com.html5parser.SimplestTreeParser.TreeConstructor;
+import com.html5parser.TokenizerStates.RCDATA_state;
 
 public class InHead {
 
@@ -66,13 +70,18 @@ public class InHead {
 		// Switch the insertion mode to "after head".
 		// An end tag whose tag name is one of: "body", "html", "br"
 		// Act as described in the "anything else" entry below.
-		if (token.getValue().equals("head"))
-			TokenAnythingElse(token, treeConstructor, false);
+		if (token.getValue().equals("head")){
+			ParserStacks.openElements.pop();
+			Parser.currentMode = InsertionMode.after_head;
+		}
 		else if (token.getValue().equals("body")
 				|| token.getValue().equals("html")
 				|| token.getValue().equals("br")) {
 			TokenAnythingElse(token, treeConstructor, true);
-		} else {
+		} else if(token.getValue().equals("template")){
+			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
+		}else {
+		
 			ParserStacks.parseErrors.push(token.getValue()
 					+ " close tag in InHead insertion mode");
 		}
@@ -88,7 +97,7 @@ public class InHead {
 		// stack of open elements. If it is not, add the attribute and its
 		// corresponding token.getValue() to that element.
 		case "html":
-			ParserStacks.parseErrors.push("Unexpected html tag.");
+			ParserStacks.parseErrors.push("Unexpected html tag.");//We should call the -in body- rules instead
 			break;
 
 		// A start tag whose tag name is one of: "base", "basefont", "bgsound",
@@ -98,23 +107,14 @@ public class InHead {
 		case "base":
 		case "basefont":
 		case "bgsound":
-		case "command":
 		case "link":
-			// Element el = doc.createElement("html");
-			// doc.appendChild(el);
-			// ParserStacks.openElements.pop();
-			ParserStacks.parseErrors
-					.push("Unexpected base/basefont/bgsound/command/link tag.");
-			break;
+			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
+
 		// A start tag whose tag name is "meta"
 		// Insert an HTML element for the token. Immediately pop the current
 		// node off the stack of open elements.
 		case "meta":
-			// Element el1 = doc.createElement("html");
-			// doc.appendChild(el1);
-			// ParserStacks.openElements.pop();
-			ParserStacks.parseErrors.push("Unexpected meta tag.");
-			break;
+			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
 
 		// A start tag whose tag name is "title"
 		// Follow the generic RCDATA element parsing algorithm.
@@ -127,10 +127,25 @@ public class InHead {
 			// Let the original insertion mode be the current insertion mode.
 			// Then, switch the insertion mode to "text".
 			new StackUpdater().updateStack("title", "element");
+			TokenizerContext.state=new RCDATA_state();
 			Parser.originalMode = Parser.currentMode;
 			Parser.currentMode = InsertionMode.text;
 			// tokenizer to RCDATA_State
 			break;
+		
+		case "noframes":
+		case "style":
+			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
+
+		case "noscript":
+			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
+			
+		case "script":
+			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
+		
+		case "template":
+			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
+			
 		// A start tag whose tag name is "head"
 		// Parse error. Ignore the token.
 		case "head":

@@ -35,6 +35,7 @@ public class Tokenizer {
 			while ((currentChar = in.read()) != -1) {
 				context.setCurrentChar(currentChar);
 				state = context.getState();
+				System.out.println("Code Point: "+ Character.getName(currentChar)  + " - State: " + state.getClass().getSimpleName());
 				state.process(context);
 				// state = state.nextState();
 			}

@@ -16,10 +16,8 @@ public class RCDATA_state implements State {
 		// Switch to the character reference in RCDATA state.
 		case 0x0026:
 			// nextState = new Character_reference_in_data_state();
-			ParserStacks.parseErrors
-					.push("AMPERSAND (&) Character encountered.");
-			context.setState(new Error_state());
-			break;
+			throw new UnsupportedOperationException(Character.getName(currentChar)+" code unit handling not implemented yet ("+this.getClass().getSimpleName()+")");
+			//break;
 
 		// U+003C LESS-THAN SIGN (<)
 		// Switch to the RCDATA less-than sign state.

@@ -15,18 +15,21 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
+import com.html5parser.TokenizerStates.Data_state;
+import com.html5parser.TokenizerStates.State;
+
 public class Parser {
 
 	public static InsertionMode currentMode;
 	public static InsertionMode originalMode;
-	public static TokenizerState currentState;
+	public static State currentState;
 
 	// public static Document doc;
 
 	public static void main(String[] args) {
 		// if (args.length == 1)
 		// new Parser().parse(new ByteArrayInputStream((args[0]).getBytes()));
-		String input = "<Html>   <head></head></html>";
+		String input = "<Html><head><title><title/></head><body/></html>";
 		new Parser().parse(new ByteArrayInputStream(input.getBytes()));
 	}
 
@@ -45,7 +48,8 @@ public class Parser {
 
 		// Initialization
 		Parser.currentMode = InsertionMode.initial;
-		Parser.currentState = TokenizerState.Data_state;
+		TokenizerContext.state = new Data_state();
+		Parser.currentState = TokenizerContext.state;
 
 		try {
 			System.out.print("***** Tokens:\n");

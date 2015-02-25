@@ -5,6 +5,7 @@ import com.html5parser.SimplestTreeParser.Parser;
 import com.html5parser.SimplestTreeParser.ParserStacks;
 import com.html5parser.SimplestTreeParser.StackUpdater;
 import com.html5parser.SimplestTreeParser.Token;
+import com.html5parser.SimplestTreeParser.Token.TokenType;
 import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class BeforeHead {
@@ -24,8 +25,10 @@ public class BeforeHead {
 				TokenAnythingElse(token, treeConstructor, true);
 			break;
 		case comment:
+			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
+			//TODO: comment token in BeforeHead;
 			// doc.appendChild(doc.createComment(token.getValue()));
-			break;
+			//break;
 		case DOCTYPE:
 			ParserStacks.parseErrors
 					.push("DOCTYPE in BeforeHead insertion mode");
