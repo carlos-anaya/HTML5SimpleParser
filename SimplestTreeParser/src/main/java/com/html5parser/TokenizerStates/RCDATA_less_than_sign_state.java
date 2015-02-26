@@ -7,7 +7,8 @@ import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class RCDATA_less_than_sign_state implements State {
 
-	public void process(TokenizerContext context) {
+	public boolean process(TokenizerContext context) {
+		boolean reconsumeCharacter = false;
 		int currentChar = context.getCurrentChar();
 		TreeConstructor treeConstructor = context.getTreeConstructor();
 		switch (currentChar) {
@@ -25,8 +26,11 @@ public class RCDATA_less_than_sign_state implements State {
 			context.setState(new RCDATA_state());
 			treeConstructor.processToken(new Token(TokenType.character, String
 					.valueOf(0x003C)));
+			reconsumeCharacter = true;
 			break;
 		}
+		
+		return reconsumeCharacter;
 	}
 
 }

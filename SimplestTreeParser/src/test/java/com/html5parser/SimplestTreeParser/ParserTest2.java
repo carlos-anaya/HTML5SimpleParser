@@ -14,14 +14,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 @RunWith(value = Parameterized.class)
-public class ParserTest {
+public class ParserTest2 {
 	
 	private Parser parser;
 	
 	private String input;
  
 	//parameters pass via this constructor
-	public ParserTest(String input) {
+	public ParserTest2(String input) {
 		this.input = input;
 	}
  
@@ -29,51 +29,27 @@ public class ParserTest {
 	@Parameters(name = "Test {0}")
 	public static Iterable<Object[]> data1() {
 		return Arrays.asList(new Object[][] { 
-			{ ""}, 
-			{ "    " }, 
-			{ "<html>"},
-			{ "<head>"},
-			{ "<body>"},
+			{ "abcdefgh"}, 
+			{ "<title>hello</title>" }, 
+			{ "test<title/"},
+			{ "<i/>"},
+			{ "<i   />"},
+			{ "<p><i>test</p"},
+			{ "<head><i>test<body></i>"},
+			{ "<body/><p>qwerty"},
 			
-			{ "<HTML>"},
-			{ "<hEAd>"},
 			
-			{ "<html/>"},
-			{ "<head/>"},
-			{ "<body/>"},
+			{ "<html/></body><p>"},
 			
-			{ "<html"},
+			{ "<html><head><body><p><i>test</p>"},
+			{ "<head><title>html5<body><html/>abcder"},
+			{ "<head><body><html/>abcder"},
 			
-			{ "<html/"},
-			{ "<head/"},
-			{ "<body/"},	
+			{ "<html>             aaa"},
 			
-			{ "</html"},
-			{ "</head"},
-			{ "</body"},
+			{ "     <html>//n<head/>//n<body/>//n</html>"},
 			
-			{ "</html/>"},
-			{ "</head/>"},
-			{ "</body/>"},
-			
-			{ "</html/"},
-			{ "</head/"},
-			{ "</body/"},
-			
-			{ "<html/><xx"},
-			
-			{ "<html><head><body>"},
-			{ "<html><body>"},
-			{ "<head><body><html/>"},
-			
-			{ "<html>             "},
-			{ "<html>      <head><body><html/>"},
-			
-			{ "<html><head/><body/></html>"},
-			
-			{ "      <html><head><body><html/>"},
-			{ "           <html>      <head><body><html/>"},
-			
+			{ "<   body   >"},
 		});
 	}
 
@@ -104,10 +80,9 @@ public class ParserTest {
 		Node body = head.getNextSibling();
 		assertTrue("body tag incorrect "+ body.getNodeName(), body.getNodeName().equals("body"));
 		
-		//Assert head and body have no children
+		//Assert head or body have at least 1 children
 		
-		assertTrue(head.getChildNodes().getLength() == 0);
-		assertTrue(body.getChildNodes().getLength() == 0);
+		assertTrue(head.getChildNodes().getLength() > 0 || body.getChildNodes().getLength() > 0);
 		
 	}
 

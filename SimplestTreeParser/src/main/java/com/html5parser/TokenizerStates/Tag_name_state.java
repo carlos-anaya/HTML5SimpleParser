@@ -7,7 +7,8 @@ import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class Tag_name_state implements State {
 
-	public void process(TokenizerContext context) {
+	public boolean process(TokenizerContext context) {
+		boolean reconsumeCharacter = false;
 		int currentChar = context.getCurrentChar();
 		TreeConstructor treeConstructor = context.getTreeConstructor();
 		Token currentToken = context.getCurrentToken();
@@ -65,7 +66,8 @@ public class Tag_name_state implements State {
 		case -1:
 			ParserStacks.parseErrors.push("Invalid character - EOF");
 			context.setState(new Data_state());
-			context.getState().process(context);
+			//context.getState().process(context);
+			reconsumeCharacter = true;
 			break;
 
 		// Anything else
@@ -78,6 +80,7 @@ public class Tag_name_state implements State {
 			break;
 		}
 
+		return reconsumeCharacter;
 	}
 
 }

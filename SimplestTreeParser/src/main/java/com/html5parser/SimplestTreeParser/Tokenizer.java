@@ -31,11 +31,12 @@ public class Tokenizer {
 		try {
 			in = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 
-			int currentChar = 0;
-			while ((currentChar = in.read()) != -1) {
+			int currentChar = in.read();
+			while (currentChar != -1) {
 				context.setCurrentChar(currentChar);
 				state = context.getState();
-				state.process(context);
+				if (!state.process(context))
+					currentChar = in.read();
 				// state = state.nextState();
 			}
 
@@ -43,7 +44,10 @@ public class Tokenizer {
 			// Send value -1 for EOF
 			context.setCurrentChar(-1);
 			state = context.getState();
-			state.process(context);
+			while (state.process(context)) {
+				//context.setCurrentChar(-1);
+				state = context.getState();
+			}
 
 			// return treeConstructor
 			// .ProcessToken(new Token(TokenType.end_of_file, null));

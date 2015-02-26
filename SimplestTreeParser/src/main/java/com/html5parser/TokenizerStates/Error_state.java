@@ -7,12 +7,15 @@ import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class Error_state implements State {
 
-	public void process(TokenizerContext context) {
+	public boolean process(TokenizerContext context) {
+		boolean reconsumeCharacter = false;
 
 		TreeConstructor treeConstructor = context.getTreeConstructor();
 		// EOF
 		// Emit an end-of-file token.
 		treeConstructor.processToken(new Token(TokenType.end_of_file, null));
+		
+		return reconsumeCharacter;
 	}
 
 }

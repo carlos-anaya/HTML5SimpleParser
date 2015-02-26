@@ -8,7 +8,8 @@ import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class Data_state implements State {
 
-	public void process(TokenizerContext context) {
+	public boolean process(TokenizerContext context) {
+		boolean reconsumeCharacter = false;
 		int currentChar = context.getCurrentChar();
 		TreeConstructor treeConstructor = context.getTreeConstructor();
 		switch (currentChar) {
@@ -49,6 +50,7 @@ public class Data_state implements State {
 					.valueOf(Character.toChars(currentChar))));
 			break;
 		}
+		return reconsumeCharacter;
 	}
 
 }

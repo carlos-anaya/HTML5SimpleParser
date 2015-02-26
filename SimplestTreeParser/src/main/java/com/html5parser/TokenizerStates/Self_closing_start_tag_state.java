@@ -8,7 +8,8 @@ import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class Self_closing_start_tag_state implements State {
 
-	public void process(TokenizerContext context) {
+	public boolean process(TokenizerContext context) {
+		boolean reconsumeCharacter = false;
 		int currentChar = context.getCurrentChar();
 		Token currentToken = context.getCurrentToken();
 		TreeConstructor treeConstructor = context.getTreeConstructor();
@@ -40,6 +41,7 @@ public class Self_closing_start_tag_state implements State {
 		case -1:
 			context.setState(new Data_state());
 			ParserStacks.parseErrors.push("EOF encountered.");
+			reconsumeCharacter = true;
 			break;
 
 		// Anything else
@@ -48,9 +50,12 @@ public class Self_closing_start_tag_state implements State {
 			ParserStacks.parseErrors.push(Character.toString((char) currentChar) + " (" +  String.valueOf(currentChar) + ") Invalid character encountered.");
 			//context.setState(new Before_attribute_name_state());
 			
-			context.setState(new Error_state());
+			//context.setState(new Error_state());
+			reconsumeCharacter = true;
 			break;
 		}
+		
+		return reconsumeCharacter;
 	}
 
 }

@@ -8,7 +8,8 @@ import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class End_tag_open_state implements State {
 
-	public void process(TokenizerContext context) {
+	public boolean process(TokenizerContext context) {
+		boolean reconsumeCharacter = false;
 		int currentChar = context.getCurrentChar();
 		TreeConstructor treeConstructor = context.getTreeConstructor();
 
@@ -52,8 +53,7 @@ public class End_tag_open_state implements State {
 							String.valueOf(0x003C)));
 					treeConstructor.processToken(new Token(TokenType.character,
 							String.valueOf(0x002F)));
-					treeConstructor
-							.processToken(new Token(TokenType.end_of_file, null));
+					reconsumeCharacter = true;
 					break;
 
 			// Anything else
@@ -65,6 +65,8 @@ public class End_tag_open_state implements State {
 				break;
 			}
 		}
+		
+		return reconsumeCharacter;
 	}
 
 }

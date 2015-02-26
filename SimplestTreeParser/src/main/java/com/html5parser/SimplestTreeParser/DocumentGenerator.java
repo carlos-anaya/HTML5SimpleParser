@@ -28,9 +28,14 @@ public class DocumentGenerator {
 	}
 
 	public static Document getFinalDocument() {
-		if (doc != null)
-			if (ParserStacks.openElements.size() > 0)
+		Document out = null;
+		if (doc == null)
+			doc = getDocument();
+			if (ParserStacks.openElements.size() > 0){
 				doc.appendChild(ParserStacks.openElements.firstElement());
-		return doc;
+			out = doc;
+			doc = null;
+			}
+		return out;
 	}
 }
