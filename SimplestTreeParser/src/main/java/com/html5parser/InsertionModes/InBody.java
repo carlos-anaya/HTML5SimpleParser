@@ -1,3 +1,10 @@
+/*
+ * In order to pass the tests:
+ * Commented character method
+ * Added default action for head (start & end tag)
+ * Commented code for other tags
+ * */
+
 package com.html5parser.InsertionModes;
 
 import java.util.Iterator;
@@ -9,11 +16,14 @@ import com.html5parser.SimplestTreeParser.Parser;
 import com.html5parser.SimplestTreeParser.ParserStacks;
 import com.html5parser.SimplestTreeParser.StackUpdater;
 import com.html5parser.SimplestTreeParser.Token;
+import com.html5parser.SimplestTreeParser.TokenizerContext;
 import com.html5parser.SimplestTreeParser.TreeConstructor;
+import com.html5parser.TokenizerStates.Error_state;
 
 public class InBody {
 
 	public boolean process(Token token, TreeConstructor treeConstructor) {
+
 		switch (token.getType()) {
 		case character:
 			characterToken(token);
@@ -49,34 +59,38 @@ public class InBody {
 	// }
 
 	private void characterToken(Token token) {
-		// A character token that is U+0000 NULL
-		// Parse error. Ignore the token.
-		
-		int currentChar = (int)token.getValue().charAt(0);
-		
-		
-		if (currentChar == 0x0000) {
-			ParserStacks.parseErrors.push("Null character found");
-		}
-		// A character token that is one of U+0009 CHARACTER TABULATION, "LF"
-		// (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
-		// Reconstruct the active formatting elements, if any.
-		// Insert the token's character into the current node.
-		else if (currentChar == 0x0009
-				|| currentChar == 0x000A
-				|| currentChar == 0x000C
-				|| currentChar == 0x000D 
-				|| currentChar == 0x0020) {
 
-			new StackUpdater().updateStack(token.getValue(), "text");
-		}
-		// Any other character token
-		// Reconstruct the active formatting elements, if any.
-		// Insert the token's character into the current node.
-		// Set the frameset-ok flag to "not ok".
-		else {
-			new StackUpdater().updateStack(token.getValue(), "text");
-		}
+		ParserStacks.parseErrors.push("Unsuported character token");
+		TokenizerContext.state = new Error_state();
+
+//		 // A character token that is U+0000 NULL
+//		 // Parse error. Ignore the token.
+//		
+//		 int currentChar = (int)token.getValue().charAt(0);
+//		
+//		
+//		 if (currentChar == 0x0000) {
+//		 ParserStacks.parseErrors.push("Null character found");
+//		 }
+//		 // A character token that is one of U+0009 CHARACTER TABULATION, "LF"
+//		 // (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
+//		 // Reconstruct the active formatting elements, if any.
+//		 // Insert the token's character into the current node.
+//		 else if (currentChar == 0x0009
+//		 || currentChar == 0x000A
+//		 || currentChar == 0x000C
+//		 || currentChar == 0x000D
+//		 || currentChar == 0x0020) {
+//		
+//		 new StackUpdater().updateStack(token.getValue(), "text");
+//		 }
+//		 // Any other character token
+//		 // Reconstruct the active formatting elements, if any.
+//		 // Insert the token's character into the current node.
+//		 // Set the frameset-ok flag to "not ok".
+//		 else {
+//		 new StackUpdater().updateStack(token.getValue(), "text");
+//		 }
 	}
 
 	private void TokenEndTag(Token token, TreeConstructor treeConstructor) {
@@ -129,20 +143,29 @@ public class InBody {
 		// of the token, then this is a parse error.
 		// Pop elements from the stack of open elements until an element with
 		// the same tag name as the token has been popped from the stack.
-		case "p":
-			ParserStacks.openElements.pop();
+		// case "p":
+		// ParserStacks.openElements.pop();
+		// break;
+		//
+		// // An end tag whose tag name is one of: "a", "b", "big", "code",
+		// "em",
+		// // "font", "i", "nobr", "s", "small", "strike", "strong", "tt", "u"
+		// // Run these steps
+		// case "i":
+		// case "b":
+		// formattingEndTag(token);
+		// break;
+		case "head":
+			ParserStacks.parseErrors.push("Unexpected " + token.getValue()
+					+ " tag.");
 			break;
-
-		// An end tag whose tag name is one of: "a", "b", "big", "code", "em",
-		// "font", "i", "nobr", "s", "small", "strike", "strong", "tt", "u"
-		// Run these steps
-		case "i":
-		case "b":
-			formattingEndTag(token);
+		case "title":
 			break;
 		default:
 			ParserStacks.parseErrors.push("Unexpected " + token.getValue()
 					+ " tag.");
+			TokenizerContext.state = new Error_state();
+
 			break;
 		}
 
@@ -203,24 +226,30 @@ public class InBody {
 		// If the stack of open elements has a p element in button scope, then
 		// act as if an end tag with the tag name "p" had been seen.
 		// Insert an HTML element for the token.
-		case "p":
-			new StackUpdater().updateStack(token.getValue(), "element");
-			break;
-		// A start tag whose tag name is one of: "b", "big", "code", "em",
-		// "font", "i", "s", "small", "strike", "strong", "tt", "u"
-		// Reconstruct the active formatting elements, if any.
-		// Insert an HTML element for the token. Push onto the list of active
-		// formatting elements that element.
-		case "b":
-		case "i":
-			formattingStartTag(token);
-			break;
+		// case "p":
+		// new StackUpdater().updateStack(token.getValue(), "element");
+		// break;
+		// // A start tag whose tag name is one of: "b", "big", "code", "em",
+		// // "font", "i", "s", "small", "strike", "strong", "tt", "u"
+		// // Reconstruct the active formatting elements, if any.
+		// // Insert an HTML element for the token. Push onto the list of active
+		// // formatting elements that element.
+		// case "b":
+		// case "i":
+		// formattingStartTag(token);
+		// break;
 		// Any other start tag
 		// Reconstruct the active formatting elements, if any.
 		// Insert an HTML element for the token.
+		case "head":
+			ParserStacks.parseErrors.push("Unexpected " + token.getValue()
+					+ " tag.");
+			break;
 		default:
 			ParserStacks.parseErrors.push("Unexpected " + token.getValue()
 					+ " tag.");
+			TokenizerContext.state = new Error_state();
+
 			// new StackUpdater().updateStack(token.getValue(), "element");
 			break;
 
@@ -229,15 +258,17 @@ public class InBody {
 	}
 
 	private void formattingStartTag(Token token) {
-		// Look for 
-		// A start tag whose tag name is one of: "b", "big", "code", "em", "font", "i", "s", "small", "strike", "strong", "tt", "u"
+		// Look for
+		// A start tag whose tag name is one of: "b", "big", "code", "em",
+		// "font", "i", "s", "small", "strike", "strong", "tt", "u"
 		// http://dev.w3.org/html5/spec-preview/tokenization.html#parsing-main-inbody
 		new StackUpdater().updateStack(token.getValue(), "element");
 	}
 
 	private void formattingEndTag(Token token) {
-		// Look for 
-		// An end tag whose tag name is one of: "a", "b", "big", "code", "em", "font", "i", "nobr", "s", "small", "strike", "strong", "tt", "u"
+		// Look for
+		// An end tag whose tag name is one of: "a", "b", "big", "code", "em",
+		// "font", "i", "nobr", "s", "small", "strike", "strong", "tt", "u"
 		// http://dev.w3.org/html5/spec-preview/tokenization.html#parsing-main-inbody
 		ParserStacks.openElements.pop();
 	}

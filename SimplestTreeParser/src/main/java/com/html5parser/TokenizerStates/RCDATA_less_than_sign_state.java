@@ -16,7 +16,7 @@ public class RCDATA_less_than_sign_state implements State {
 		// Set the temporary buffer to the empty string. Switch to the RCDATA
 		// end tag open state.
 		case 0x002F:
-			context.setState(new Tag_open_state());
+			context.setState(new RCDATA_end_tag_open_state());
 			break;
 
 		// Anything else

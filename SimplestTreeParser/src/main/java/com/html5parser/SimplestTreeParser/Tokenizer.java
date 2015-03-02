@@ -6,11 +6,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+import com.html5parser.TokenizerStates.Data_state;
 import com.html5parser.TokenizerStates.State;
 
 public class Tokenizer {
 
-	private TokenizerContext context = new TokenizerContext();
+	private TokenizerContext context;
+	
+	public Tokenizer() {
+		context = new TokenizerContext();
+		context.setState(new Data_state());
+	}
 
 	/**
 	 * Tokenize a stream.

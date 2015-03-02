@@ -17,6 +17,8 @@ public class Error_state implements State {
 		//
 		// return reconsumeCharacter;
 
+		System.out.print("*****\n PARSE ERROR: "
+				+ ParserStacks.parseErrors.lastElement() + "\n\n");
 		throw new RuntimeErrorException(null, "Parse error: "
 				+ ParserStacks.parseErrors.lastElement());
 	}

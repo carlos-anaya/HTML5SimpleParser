@@ -25,7 +25,7 @@ public class Parser {
 	public static void main(String[] args) {
 		// if (args.length == 1)
 		// new Parser().parse(new ByteArrayInputStream((args[0]).getBytes()));
-		String input = "</⢺晀㭰>";
+		String input = "<body        >";
 		// new Parser().parse(new ByteArrayInputStream(input.getBytes()));
 		new Parser().parse(input);
 	}
@@ -51,11 +51,15 @@ public class Parser {
 
 		// Initialization
 		Parser.currentMode = InsertionMode.initial;
+		Parser.originalMode = null;
 		Parser.currentState = TokenizerState.Data_state;
+		ParserStacks.openElements.clear();
+		ParserStacks.parseErrors.clear();
 
 		try {
 //			System.out.print("\n***** Tokens:\n");
 			stream = new Decoder().ValidateEncoding(stream);
+			
 			new Tokenizer().Tokenize(stream);
 			doc = DocumentGenerator.getFinalDocument(); // doc = new
 			// StackUpdater().getDocument();

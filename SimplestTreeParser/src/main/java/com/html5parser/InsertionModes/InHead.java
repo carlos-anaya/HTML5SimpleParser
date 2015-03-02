@@ -5,10 +5,9 @@ import com.html5parser.SimplestTreeParser.Parser;
 import com.html5parser.SimplestTreeParser.ParserStacks;
 import com.html5parser.SimplestTreeParser.StackUpdater;
 import com.html5parser.SimplestTreeParser.Token;
-import com.html5parser.SimplestTreeParser.Tokenizer;
 import com.html5parser.SimplestTreeParser.TokenizerContext;
-import com.html5parser.SimplestTreeParser.TokenizerState;
 import com.html5parser.SimplestTreeParser.TreeConstructor;
+import com.html5parser.TokenizerStates.Error_state;
 import com.html5parser.TokenizerStates.RCDATA_state;
 
 public class InHead {
@@ -19,22 +18,22 @@ public class InHead {
 		// (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
 		// Insert the character into the current node.
 		case character:
-			int currentChar = (int)token.getValue().charAt(0);
-			if (currentChar == 0x0009
-					|| currentChar == 0x000A
-					|| currentChar == 0x000C
-					|| currentChar == 0x000D 
-					|| currentChar == 0x0020) {
-
-				// doc.getElementsByTagName("head")
-				// .item(0)
-				// .setTextContent(
-				// doc.getElementsByTagName("head").item(0)
-				// .getTextContent()
-				// + token.getValue());
-				new StackUpdater().updateStack(token.getValue(), "text");
-			} else
-				TokenAnythingElse(token, treeConstructor, true);
+//			int currentChar = (int) token.getValue().charAt(0);
+//			if (currentChar == 0x0009 || currentChar == 0x000A
+//					|| currentChar == 0x000C || currentChar == 0x000D
+//					|| currentChar == 0x0020) {
+//
+//				// doc.getElementsByTagName("head")
+//				// .item(0)
+//				// .setTextContent(
+//				// doc.getElementsByTagName("head").item(0)
+//				// .getTextContent()
+//				// + token.getValue());
+//				new StackUpdater().updateStack(token.getValue(), "text");
+//			} else
+				//TokenAnythingElse(token, treeConstructor, true);
+			ParserStacks.parseErrors.push("Unsuported character token");
+			TokenizerContext.state = new Error_state();
 			break;
 		case comment:
 			new StackUpdater().updateStack(token.getValue(), "comment");
@@ -70,18 +69,19 @@ public class InHead {
 		// Switch the insertion mode to "after head".
 		// An end tag whose tag name is one of: "body", "html", "br"
 		// Act as described in the "anything else" entry below.
-		if (token.getValue().equals("head")){
+		if (token.getValue().equals("head")) {
 			ParserStacks.openElements.pop();
 			Parser.currentMode = InsertionMode.after_head;
-		}
-		else if (token.getValue().equals("body")
+		} else if (token.getValue().equals("body")
 				|| token.getValue().equals("html")
 				|| token.getValue().equals("br")) {
 			TokenAnythingElse(token, treeConstructor, true);
-		} else if(token.getValue().equals("template")){
-			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
+		} else if (token.getValue().equals("template")) {
+			throw new UnsupportedOperationException(token.getType().name()
+					+ "token handling not implemented yet ("
+					+ this.getClass().getSimpleName() + ")");
 		} else {
-		
+
 			ParserStacks.parseErrors.push(token.getValue()
 					+ " close tag in InHead insertion mode");
 		}
@@ -97,7 +97,11 @@ public class InHead {
 		// stack of open elements. If it is not, add the attribute and its
 		// corresponding token.getValue() to that element.
 		case "html":
-			ParserStacks.parseErrors.push("Unexpected html tag.");//We should call the -in body- rules instead
+			ParserStacks.parseErrors.push("Unexpected html tag.");// We should
+																	// call the
+																	// -in body-
+																	// rules
+																	// instead
 			break;
 
 		// A start tag whose tag name is one of: "base", "basefont", "bgsound",
@@ -108,16 +112,20 @@ public class InHead {
 		case "basefont":
 		case "bgsound":
 		case "link":
-			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
+			throw new UnsupportedOperationException(token.getType().name()
+					+ "token handling not implemented yet ("
+					+ this.getClass().getSimpleName() + ")");
 
-		// A start tag whose tag name is "meta"
-		// Insert an HTML element for the token. Immediately pop the current
-		// node off the stack of open elements.
+			// A start tag whose tag name is "meta"
+			// Insert an HTML element for the token. Immediately pop the current
+			// node off the stack of open elements.
 		case "meta":
-			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
+			throw new UnsupportedOperationException(token.getType().name()
+					+ "token handling not implemented yet ("
+					+ this.getClass().getSimpleName() + ")");
 
-		// A start tag whose tag name is "title"
-		// Follow the generic RCDATA element parsing algorithm.
+			// A start tag whose tag name is "title"
+			// Follow the generic RCDATA element parsing algorithm.
 		case "title":
 			// Insert an HTML element for the token.
 			// If the algorithm that was invoked is the generic raw text element
@@ -127,27 +135,35 @@ public class InHead {
 			// Let the original insertion mode be the current insertion mode.
 			// Then, switch the insertion mode to "text".
 			new StackUpdater().updateStack("title", "element");
-			TokenizerContext.state=new RCDATA_state();
+			TokenizerContext.state = new RCDATA_state();
 			Parser.originalMode = Parser.currentMode;
 			Parser.currentMode = InsertionMode.text;
 			// tokenizer to RCDATA_State
 			break;
-		
+
 		case "noframes":
 		case "style":
-			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
+			throw new UnsupportedOperationException(token.getType().name()
+					+ "token handling not implemented yet ("
+					+ this.getClass().getSimpleName() + ")");
 
 		case "noscript":
-			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
-			
+			throw new UnsupportedOperationException(token.getType().name()
+					+ "token handling not implemented yet ("
+					+ this.getClass().getSimpleName() + ")");
+
 		case "script":
-			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
-		
+			throw new UnsupportedOperationException(token.getType().name()
+					+ "token handling not implemented yet ("
+					+ this.getClass().getSimpleName() + ")");
+
 		case "template":
-			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
-			
-		// A start tag whose tag name is "head"
-		// Parse error. Ignore the token.
+			throw new UnsupportedOperationException(token.getType().name()
+					+ "token handling not implemented yet ("
+					+ this.getClass().getSimpleName() + ")");
+
+			// A start tag whose tag name is "head"
+			// Parse error. Ignore the token.
 		case "head":
 			ParserStacks.parseErrors
 					.push("head start tag in InHead insertion mode.");

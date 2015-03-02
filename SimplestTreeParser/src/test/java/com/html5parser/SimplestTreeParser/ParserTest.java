@@ -1,9 +1,7 @@
 package com.html5parser.SimplestTreeParser;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.Arrays;
 
@@ -30,7 +28,6 @@ public class ParserTest {
 	private String input;
 
 	private final String MINIMAL_DOM = "<html><head/><body/></html>";
-	private String serializedDoc;
 
 	// parameters pass via this constructor
 	public ParserTest(String input) {
@@ -81,8 +78,8 @@ public class ParserTest {
 	@Test
 	public final void tests() {
 
-		Document doc = parser
-				.parse(new ByteArrayInputStream((input).getBytes()));
+		Document doc = parser.parse(input);
+		// .parse(new ByteArrayInputStream((input).getBytes()));
 
 		assertEquals(MINIMAL_DOM, SerializeDocument(doc));
 		// //Assert doc has only one child
@@ -110,20 +107,6 @@ public class ParserTest {
 		// assertTrue(head.getChildNodes().getLength() == 0);
 		// assertTrue(body.getChildNodes().getLength() == 0);
 		//
-	}
-
-	@Test
-	public final void whenEmptyStringIsUsedThenProducesMinimalDOM() {
-		String emptyString = emptyStringGenerator();
-		serializedDoc = SerializeDocument(parser
-				.parse(new ByteArrayInputStream(emptyString.getBytes())));
-
-		assertTrue("Minimal DOM", serializedDoc.matches(MINIMAL_DOM));
-	}
-
-	private String emptyStringGenerator() {
-		String res = "";
-		return res;
 	}
 
 	private String SerializeDocument(Document doc) {

@@ -67,7 +67,7 @@ public class Text {
 		default:
 			ParserStacks.openElements.pop();
 			Parser.currentMode = Parser.originalMode;
-			treeConstructor.processToken(token);
+			//treeConstructor.processToken(token);
 			break;
 		}
 

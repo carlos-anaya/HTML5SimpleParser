@@ -5,7 +5,6 @@ import com.html5parser.SimplestTreeParser.Parser;
 import com.html5parser.SimplestTreeParser.ParserStacks;
 import com.html5parser.SimplestTreeParser.StackUpdater;
 import com.html5parser.SimplestTreeParser.Token;
-import com.html5parser.SimplestTreeParser.Token.TokenType;
 import com.html5parser.SimplestTreeParser.TreeConstructor;
 
 public class BeforeHead {
@@ -16,19 +15,18 @@ public class BeforeHead {
 		// (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
 		// Ignore the token.
 		case character:
-			int currentChar = (int)token.getValue().charAt(0);
-			if (!(currentChar == 0x0009
-					|| currentChar == 0x000A
-					|| currentChar == 0x000C
-					|| currentChar == 0x000D 
-					|| currentChar == 0x0020))
+			int currentChar = (int) token.getValue().charAt(0);
+			if (!(currentChar == 0x0009 || currentChar == 0x000A
+					|| currentChar == 0x000C || currentChar == 0x000D || currentChar == 0x0020))
 				TokenAnythingElse(token, treeConstructor, true);
 			break;
 		case comment:
-			throw new UnsupportedOperationException(token.getType().name()+"token handling not implemented yet ("+this.getClass().getSimpleName()+")");
-			//TODO: comment token in BeforeHead;
+			throw new UnsupportedOperationException(token.getType().name()
+					+ "token handling not implemented yet ("
+					+ this.getClass().getSimpleName() + ")");
+			// TODO: comment token in BeforeHead;
 			// doc.appendChild(doc.createComment(token.getValue()));
-			//break;
+			// break;
 		case DOCTYPE:
 			ParserStacks.parseErrors
 					.push("DOCTYPE in BeforeHead insertion mode");

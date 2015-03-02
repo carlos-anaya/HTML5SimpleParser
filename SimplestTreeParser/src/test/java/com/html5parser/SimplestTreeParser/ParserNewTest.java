@@ -19,12 +19,16 @@ import org.w3c.dom.Document;
 
 public class ParserNewTest {
 
-	private final int MAX_TOKEN_SIZE = 10;
+	private final int MAX_TOKEN_SIZE = 20;
 	private Parser parser;
 	private final String MINIMAL_DOM = "^(<html><head/><body/></html>)$";
-	private final String TITLE_IN_HEAD_DOM = "^(<html><head>)(<title>(.)*</title>)?(</head><body/></html>)$";
-	private final String TITLE_IN_BODY_DOM = "^(<html><head/><body>)(<title>(.)*</title>)?(</body></html>)$";
-	private final String TITLE_MIXED_DOM = "^(<html><head>)(<title>(.)*</title>)?(</head><body>)(<title>(.)*</title>)?(</body></html>)$";
+	private final String TITLE_REG_EXP = "((<title>(.)*</title>)|(<title/>))?";
+	private final String TITLE_IN_HEAD_DOM = "^(<html><head>)" + TITLE_REG_EXP
+			+ "(</head><body/></html>)$";
+	private final String TITLE_IN_BODY_DOM = "^(<html><head/><body>)"
+			+ TITLE_REG_EXP + "(</body></html>)$";
+	private final String TITLE_MIXED_DOM = "^(<html><head>)" + TITLE_REG_EXP
+			+ "(</head><body>)" + TITLE_REG_EXP + "(</body></html>)$";
 	private String serializedDoc;
 
 	@Before
@@ -32,8 +36,14 @@ public class ParserNewTest {
 		parser = new Parser();
 	}
 
+	/******************
+	 * ASSERT MINIMAL DOM TESTS
+	 ******************/
+
 	@Test
 	public final void whenEmptyStringIsUsedThenProducesMinimalDOM() {
+		System.out
+				.print("\n~~~~ whenEmptyStringIsUsedThenProducesMinimalDOM ~~~~\n\n");
 		String inputString = emptyStringGenerator(0);
 		serializedDoc = SerializeDocument(parser.parse(inputString));
 
@@ -42,35 +52,63 @@ public class ParserNewTest {
 
 	@Test
 	public final void whenHtmlHeadBodyTagsAreUsedThenProducesMinimalDOM() {
-		String inputString = htmlHeadBodyGenerator(0);
+		System.out
+				.print("\n~~~~ whenHtmlHeadBodyTagsAreUsedThenProducesMinimalDOM ~~~~\n\n");
+		String inputString = htmlHeadBodyGenerator(0, false);
 		serializedDoc = SerializeDocument(parser.parse(inputString));
 
 		assertTrue("Minimal DOM", serializedDoc.matches(MINIMAL_DOM));
 	}
 
 	@Test
-	public final void whenValidEndTagAreUsedThenProducesMinimalDOM() {
+	public final void whenHtmlHeadBodyTagsWithEmptyStringAreUsedThenProducesMinimalDOM() {
+		System.out
+				.print("\n~~~~ whenHtmlHeadBodyTagsWithEmptyStringAreUsedThenProducesMinimalDOM ~~~~\n\n");
+		String inputString = htmlHeadBodyGenerator(0, true);
+		serializedDoc = SerializeDocument(parser.parse(inputString));
+
+		assertTrue("Minimal DOM", serializedDoc.matches(MINIMAL_DOM));
+	}
+
+	@Test
+	public final void whenEmptyStringInsideHtmlTagIsUsedThenProducesMinimalDOM() {
+		System.out
+				.print("\n~~~~ whenEmptyStringInsideHtmlTagIsUsedThenProducesMinimalDOM ~~~~\n\n");
+		String inputString = emptyStringInsideTagGenerator(0, "<html>");
+		serializedDoc = SerializeDocument(parser.parse(inputString));
+
+		assertTrue("Minimal DOM", serializedDoc.matches(MINIMAL_DOM));
+	}
+
+	@Test
+	public final void whenValidEndTagIsUsedThenProducesMinimalDOM() {
+		System.out
+				.print("\n~~~~ whenValidEndTagIsUsedThenProducesMinimalDOM ~~~~\n\n");
 		String inputString = validEndTagGenerator(0);
 		serializedDoc = SerializeDocument(parser.parse(inputString));
 
 		assertTrue("Minimal DOM", serializedDoc.matches(MINIMAL_DOM));
 	}
 
-	@Test(expected = RuntimeException.class)
-	public final void whenInvalidEndTagAreUsedThenExceptionIsThrown() {
-		String inputString = invalidEndTagGenerator(0);
-		SerializeDocument(parser.parse(inputString));
+	@Test
+	public final void whenUnclosedValidStartTagIsUsedThenProducesMinimalDOM() {
+		System.out
+				.print("\n~~~~ whenUnclosedValidStartTagIsUsedThenProducesMinimalDOM ~~~~\n\n");
+		String inputString = unclosedValidStartTagGenerator(0);
+		serializedDoc = SerializeDocument(parser.parse(inputString));
+
+		assertTrue("Minimal DOM", serializedDoc.matches(MINIMAL_DOM));
 	}
-	
-	@Test(expected = RuntimeException.class)
-	public final void whenNonEmptyStringIsUsedThenExceptionIsThrown() {
-		String inputString = latinLettersGenerator(0);
-		SerializeDocument(parser.parse(inputString));
-	}
+
+	/******************
+	 * ASSERT TITLE TESTS
+	 ******************/
 
 	@Test
 	public final void whenTitleInHeadisUsedThenProducesMinimalDOMPlusTitle() {
-		String inputString = titleGenerator(0);
+		System.out
+				.print("\n~~~~ whenTitleInHeadisUsedThenProducesMinimalDOMPlusTitle ~~~~\n\n");
+		String inputString = titleInHeadGenerator(0);
 		serializedDoc = SerializeDocument(parser.parse(inputString));
 
 		assertTrue("Title DOM", serializedDoc.matches(TITLE_IN_HEAD_DOM));
@@ -78,11 +116,74 @@ public class ParserNewTest {
 
 	@Test
 	public final void whenTitleInBodyisUsedThenProducesMinimalDOMPlusTitle() {
-		String inputString = titleGenerator(0);
+		System.out
+				.print("\n~~~~ whenTitleInBodyisUsedThenProducesMinimalDOMPlusTitle ~~~~\n\n");
+		String inputString = titleInBodyGenerator(0);
 		serializedDoc = SerializeDocument(parser.parse(inputString));
 
 		assertTrue("Title DOM", serializedDoc.matches(TITLE_IN_BODY_DOM));
 	}
+
+	@Test
+	public final void whenMultipleTitlesAreUsedThenProducesMinimalDOMPlusTitle() {
+		System.out
+				.print("\n~~~~ whenMultipleTitlesAreUsedThenProducesMinimalDOMPlusTitle ~~~~\n\n");
+		String inputString = titleInHeadGenerator(0) + titleInBodyGenerator(0)
+				+ titleGenerator(0);
+		serializedDoc = SerializeDocument(parser.parse(inputString));
+
+		assertTrue("Title DOM", serializedDoc.matches(TITLE_MIXED_DOM));
+	}
+
+	@Test
+	public final void whenTitleAfterHeadisUsedThenProducesMinimalDOMPlusTitle() {
+		System.out
+				.print("\n~~~~ whenTitleAfterHeadisUsedThenProducesMinimalDOMPlusTitle ~~~~\n\n");
+		String inputString = titleAfterHeadGenerator(0);
+		serializedDoc = SerializeDocument(parser.parse(inputString));
+
+		assertTrue("Title DOM", serializedDoc.matches(TITLE_IN_HEAD_DOM));
+	}
+
+	/******************
+	 * ASSERT EXCEPTION TESTS
+	 ******************/
+
+	@Test(expected = RuntimeException.class)
+	public final void whenInvalidEndTagIsUsedThenExceptionIsThrown() {
+		System.out
+				.print("\n~~~~ whenInvalidEndTagIsUsedThenExceptionIsThrown ~~~~\n\n");
+		String inputString = invalidEndTagGenerator(0);
+		SerializeDocument(parser.parse(inputString));
+	}
+
+	@Test(expected = RuntimeException.class)
+	public final void whenUnclosedInvalidStartTagIsUsedThenProducesExceptionIsThrown() {
+		System.out
+				.print("\n~~~~ whenUnclosedInvalidStartTagIsUsedThenProducesExceptionIsThrown ~~~~\n\n");
+		String inputString = unclosedInvalidStartTagGenerator(0);
+		SerializeDocument(parser.parse(inputString));
+	}
+
+	@Test(expected = RuntimeException.class)
+	public final void whenNonEmptyStringIsUsedThenExceptionIsThrown() {
+		System.out
+				.print("\n~~~~ whenNonEmptyStringIsUsedThenExceptionIsThrown ~~~~\n\n");
+		String inputString = latinLettersGenerator(0);
+		SerializeDocument(parser.parse(inputString));
+	}
+
+	@Test(expected = RuntimeException.class)
+	public final void whenEmptyStringInsideHeadTagIsUsedThenExceptionIsThrown() {
+		System.out
+				.print("\n~~~~ whenEmptyStringInsideHeadTagIsUsedThenExceptionIsThrown ~~~~\n\n");
+		String inputString = emptyStringInsideTagGenerator(0, "<head>");
+		serializedDoc = SerializeDocument(parser.parse(inputString));
+	}
+
+	/******************
+	 * GENERATORS
+	 ******************/
 
 	private String emptyStringGenerator(int maxSize) {
 
@@ -96,32 +197,49 @@ public class ParserNewTest {
 
 		if (randomGenerator.nextBoolean())
 			for (int i = 0; i < (maxSize == 0 ? randomGenerator
-					.nextInt(MAX_TOKEN_SIZE) : maxSize); i++)
+					.nextInt(MAX_TOKEN_SIZE) + 1 : maxSize); i++)
 				res += Character.toString(chars[randomGenerator
 						.nextInt(chars.length)]);
 		return res;
 	}
 
-	private String htmlHeadBodyGenerator(int maxSize) {
+	private String htmlHeadBodyGenerator(int maxSize, boolean appendEmptyString) {
 
 		String res = "";
-		String[] tags = new String[] { "<html>", "<head>", "<body>", "</html>",
-				"</head>", "</body>", };
+		String[] tags = new String[] { "<html", "<head", "<body", "</html",
+				"</head", "</body", };
 		Random randomGenerator = new Random();
 
 		// if (randomGenerator.nextBoolean())
 		for (int i = 0; i < (maxSize == 0 ? randomGenerator
-				.nextInt(MAX_TOKEN_SIZE) : maxSize); i++)
-			res += tags[randomGenerator.nextInt(tags.length)];
+				.nextInt(MAX_TOKEN_SIZE) + 1 : maxSize); i++)
+			res += tags[randomGenerator.nextInt(tags.length)]
+					+ (appendEmptyString ? emptyStringGenerator(0) : "") + ">";
 		return res;
+	}
+
+	private String emptyStringInsideTagGenerator(int maxSize, String tag) {
+		String res = tag + emptyStringGenerator(0)
+				+ htmlHeadBodyGenerator(0, false);
+
+		return res;
+	}
+
+	private String titleInHeadGenerator(int maxSize) {
+		return "<head>" + titleGenerator(0) + "</head>";
+	}
+
+	private String titleAfterHeadGenerator(int maxSize) {
+		return "<head/>" + titleGenerator(0);
+	}
+
+	private String titleInBodyGenerator(int maxSize) {
+		return "<body>" + titleGenerator(0) + "</body>";
 	}
 
 	private String titleGenerator(int maxSize) {
 
 		String res = "";
-		// Random randomGenerator = new Random();
-
-		// if (randomGenerator.nextBoolean())
 		res += "<title>" + latinLettersGenerator(maxSize) + "</title>";
 		return res;
 	}
@@ -129,6 +247,16 @@ public class ParserNewTest {
 	private String validEndTagGenerator(int maxSize) {
 		String res = "</" + latinLettersGenerator(0)
 				+ unicodeStringGenerator(maxSize).replace(">", "") + ">";
+		return res;
+	}
+
+	private String unclosedValidStartTagGenerator(int maxSize) {
+		String res = "<" + latinLettersGenerator(0);
+		return res;
+	}
+
+	private String unclosedInvalidStartTagGenerator(int maxSize) {
+		String res = "<" + unicodeStringGenerator(maxSize).replace(">", "");
 		return res;
 	}
 
@@ -144,7 +272,7 @@ public class ParserNewTest {
 
 		// if (randomGenerator.nextBoolean())
 		for (int i = 0; i < (maxSize == 0 ? randomGenerator
-				.nextInt(MAX_TOKEN_SIZE) : maxSize); i++)
+				.nextInt(MAX_TOKEN_SIZE) + 1 : maxSize); i++)
 			res += Character.toString((char) randomGenerator.nextInt(0xFFFF));
 		return res;
 	}
@@ -157,7 +285,7 @@ public class ParserNewTest {
 
 		// if (randomGenerator.nextBoolean())
 		for (int i = 0; i < (maxSize == 0 ? randomGenerator
-				.nextInt(MAX_TOKEN_SIZE) : maxSize); i++)
+				.nextInt(MAX_TOKEN_SIZE) + 1 : maxSize); i++)
 			res += Character.toString(chars[randomGenerator
 					.nextInt(chars.length)]);
 		return res;

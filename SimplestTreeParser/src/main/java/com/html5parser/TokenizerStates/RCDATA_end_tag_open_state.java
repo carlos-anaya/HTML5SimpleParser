@@ -31,7 +31,7 @@ public class RCDATA_end_tag_open_state implements State {
 			Token currentToken = new Token(TokenType.end_tag,
 					String.valueOf(Character.toChars(currentChar)));
 			context.setCurrentToken(currentToken);
-			context.setState(new RCDATA_end_tag_name_state());
+			context.setState(new Tag_name_state());
 		} else {
 			// Anything else
 			// Switch to the RCDATA state. Emit a U+003C LESS-THAN SIGN

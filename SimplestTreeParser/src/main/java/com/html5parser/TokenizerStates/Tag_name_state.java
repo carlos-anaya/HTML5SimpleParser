@@ -31,12 +31,6 @@ public class Tag_name_state implements State {
 		case 0x000C: // FF
 		case 0x0020: // SPACE
 			// nextState = new Before_attribute_name_state();
-			ParserStacks.parseErrors.push(Character
-					.toString((char) currentChar)
-					+ " ("
-					+ String.valueOf(currentChar)
-					+ ") Invalid character encountered.");
-			context.setState(new Error_state());
 			break;
 
 		// "/" (U+002F)
