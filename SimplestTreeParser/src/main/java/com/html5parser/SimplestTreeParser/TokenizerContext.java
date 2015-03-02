@@ -6,7 +6,7 @@ import com.html5parser.TokenizerStates.State;
 public class TokenizerContext {
 
 	
-	private State state = new Data_state();
+	public static State state = new Data_state();
 	private TreeConstructor treeConstructor = new TreeConstructor();
 	private Token currentToken = null;
 	private int currentChar = 0;

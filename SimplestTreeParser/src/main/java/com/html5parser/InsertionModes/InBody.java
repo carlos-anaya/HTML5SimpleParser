@@ -176,11 +176,7 @@ public class InBody {
 		case "script":
 		case "style":
 		case "title":
-			// Element el = doc.createElement("html");
-			// doc.appendChild(el);
-			// ParserStacks.openElements.pop();
-			ParserStacks.parseErrors.push("Unexpected " + token.getValue()
-					+ " tag.");
+			new InHead().process(token, treeConstructor);
 			break;
 		// A start tag whose tag name is "body"
 		// Parse error.

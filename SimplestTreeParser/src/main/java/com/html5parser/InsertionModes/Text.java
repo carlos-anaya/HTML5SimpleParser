@@ -50,6 +50,10 @@ public class Text {
 
 	private void characterToken(Token token) {
 		new StackUpdater().updateStack(token.getValue(), "text");
+		//THIS IS NOT WORKING, INSTEAD OF ADDING ONLY ONE "TEXT" NODE IN THE DOC, 
+		//IT INSERT MULTIPLES NODES FOR A STREAM CONTAINING A CHAIN CHARACTERS
+		//SOLUTION: IMPLEMENT THE https://html.spec.whatwg.org/multipage/syntax.html#insert-a-character
+		//ALGORITHM
 	}
 
 	private void TokenEndTag(Token token, TreeConstructor treeConstructor) {
