@@ -3,8 +3,7 @@ package com.html5parser.SimplestTreeParser;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -26,8 +25,15 @@ public class Parser {
 	public static void main(String[] args) {
 		// if (args.length == 1)
 		// new Parser().parse(new ByteArrayInputStream((args[0]).getBytes()));
-		String input = "<   body   >";
-		new Parser().parse(new ByteArrayInputStream(input.getBytes()));
+		String input = "</⢺晀㭰>";
+		// new Parser().parse(new ByteArrayInputStream(input.getBytes()));
+		new Parser().parse(input);
+	}
+
+	public Document parse(String htmlString) {
+		System.out.println("***** Input:\n" + htmlString);
+		return new Parser().parse(new ByteArrayInputStream(htmlString
+				.getBytes()));
 	}
 
 	public Document parse(InputStream stream) {
@@ -48,7 +54,7 @@ public class Parser {
 		Parser.currentState = TokenizerState.Data_state;
 
 		try {
-			System.out.print("***** Tokens:\n");
+//			System.out.print("\n***** Tokens:\n");
 			stream = new Decoder().ValidateEncoding(stream);
 			new Tokenizer().Tokenize(stream);
 			doc = DocumentGenerator.getFinalDocument(); // doc = new
@@ -57,11 +63,13 @@ public class Parser {
 			if (!ParserStacks.openElements.isEmpty())
 				ParserStacks.openElements.clear();
 
-			System.out.print("\n\n***** DOM:\n");
-			printDocument(doc, System.out);
+			System.out.print("\n***** DOM:\n");
+			// printDocument(doc, System.out);
+			System.out.println(SerializeDocument(doc, false));
 
-			System.out.print("\n\n***** ERROR LOG:\n"
-					+ ParserStacks.parseErrors);
+			System.out.print("\n\n");
+//			 System.out.print("\n\n***** ERROR LOG:\n"
+//			 + ParserStacks.parseErrors);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,21 +82,21 @@ public class Parser {
 		return doc;
 	}
 
-	private void printDocument(Document doc, OutputStream out)
+	private String SerializeDocument(Document doc, boolean indent)
 			throws IOException, TransformerException {
+		StringWriter writer = new StringWriter();
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer = tf.newTransformer();
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
 		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 		transformer.setOutputProperty(
 				"{http://xml.apache.org/xslt}indent-amount", "4");
 
-		transformer.transform(new DOMSource(doc), new StreamResult(
-				new OutputStreamWriter(out, "UTF-8")));
+		transformer.transform(new DOMSource(doc), new StreamResult(writer));
+		return writer.toString();
 	}
-
 }
 // //convert String into InputStream
 // InputStream is = new ByteArrayInputStream(str.getBytes());

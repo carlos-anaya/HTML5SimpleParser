@@ -35,8 +35,8 @@ public class TreeConstructor {
 	// public Document doc = null;
 
 	public void processToken(Token token) {
-		System.out.println(token.getType() + " - " + token.getValue()
-				+ " (insertion mode: " + Parser.currentMode + ")");
+//		System.out.println(token.getType() + " - " + token.getValue()
+//				+ " (insertion mode: " + Parser.currentMode + ")");
 
 		// boolean stopParsing = false;
 		// while (!stopParsing) {
