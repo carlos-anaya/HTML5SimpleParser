@@ -31,7 +31,7 @@ public class Parser {
 	}
 
 	public Document parse(String htmlString) {
-		System.out.println("***** Input:\n" + htmlString);
+		System.out.println("******* Input:\n" + htmlString);
 		return new Parser().parse(new ByteArrayInputStream(htmlString
 				.getBytes()));
 	}
