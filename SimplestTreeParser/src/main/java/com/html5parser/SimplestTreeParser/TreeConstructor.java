@@ -1,5 +1,6 @@
 package com.html5parser.SimplestTreeParser;
 
+import com.html5parser.InsertionModes.AfterAfterBody;
 import com.html5parser.InsertionModes.AfterBody;
 import com.html5parser.InsertionModes.AfterHead;
 import com.html5parser.InsertionModes.BeforeHTML;
@@ -63,6 +64,10 @@ public class TreeConstructor {
 		case after_body:
 			// stopParsing = new InBody().process(token);
 			new AfterBody().process(token, this);
+			break;
+		case after_after_body:
+			// stopParsing = new InBody().process(token);
+			new AfterAfterBody().process(token, this);
 			break;
 		case text:
 			// stopParsing = new InBody().process(token);

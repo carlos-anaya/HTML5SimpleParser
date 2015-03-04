@@ -43,7 +43,6 @@ public class Tokenizer {
 				state = context.getState();
 				if (!state.process(context))
 					currentChar = in.read();
-				// state = state.nextState();
 			}
 
 			// EOF Procedure
@@ -54,39 +53,6 @@ public class Tokenizer {
 				//context.setCurrentChar(-1);
 				state = context.getState();
 			}
-
-			// return treeConstructor
-			// .ProcessToken(new Token(TokenType.end_of_file, null));
-
-			// int currentChar = 0;
-			// while ((currentChar = in.read()) != -1) {
-			// //// converts int to character
-			// // char c = (char)value;
-			//
-			// switch (Parser.currentState) {
-			// case Data_state:
-			// Data_state(currentChar);
-			// break;
-			// case Character_reference_in_data_state:
-			//
-			// break;
-			// case RCDATA_state:
-			//
-			// break;
-			// case Tag_open_state:
-			//
-			// break;
-			// case Tag_name_state:
-			//
-			// break;
-			// case Self_closing_start_tag_state:
-			//
-			// break;
-			// default:
-			// break;
-			// }
-			//
-			// }
 
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block

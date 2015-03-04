@@ -79,12 +79,22 @@ public class ParserNewTest {
 
 		assertTrue("Minimal DOM", serializedDoc.matches(MINIMAL_DOM));
 	}
-
+	
 	@Test
 	public final void whenValidEndTagIsUsedThenProducesMinimalDOM() {
 		System.out
 				.print("\n~~~~ whenValidEndTagIsUsedThenProducesMinimalDOM ~~~~\n\n");
 		String inputString = validEndTagGenerator(0);
+		serializedDoc = SerializeDocument(parser.parse(inputString));
+
+		assertTrue("Minimal DOM", serializedDoc.matches(MINIMAL_DOM));
+	}
+	
+	@Test
+	public final void whenUnclosedValidStartTagAfterHtmlHeadBodyTagsIsUsedThenProducesMinimalDOM() {
+		System.out
+				.print("\n~~~~ whenUnclosedValidStartTagAfterHtmlHeadBodyTagsIsUsedThenProducesMinimalDOM ~~~~\n\n");
+		String inputString = htmlHeadBodyGenerator(0, false)+unclosedValidStartTagGenerator(0);
 		serializedDoc = SerializeDocument(parser.parse(inputString));
 
 		assertTrue("Minimal DOM", serializedDoc.matches(MINIMAL_DOM));
@@ -113,12 +123,42 @@ public class ParserNewTest {
 
 		assertTrue("Title DOM", serializedDoc.matches(TITLE_IN_HEAD_DOM));
 	}
+	
+	@Test
+	public final void whenTitleInHeadWithoutEndTagisUsedThenProducesMinimalDOMPlusTitle() {
+		System.out
+				.print("\n~~~~ whenTitleInHeadWithoutEndTagisUsedThenProducesMinimalDOMPlusTitle ~~~~\n\n");
+		String inputString = titleInHeadWithoutEndTagGenerator(0);
+		serializedDoc = SerializeDocument(parser.parse(inputString));
+
+		assertTrue("Title DOM", serializedDoc.matches(TITLE_IN_HEAD_DOM));
+	}
 
 	@Test
 	public final void whenTitleInBodyisUsedThenProducesMinimalDOMPlusTitle() {
 		System.out
 				.print("\n~~~~ whenTitleInBodyisUsedThenProducesMinimalDOMPlusTitle ~~~~\n\n");
 		String inputString = titleInBodyGenerator(0);
+		serializedDoc = SerializeDocument(parser.parse(inputString));
+
+		assertTrue("Title DOM", serializedDoc.matches(TITLE_IN_BODY_DOM));
+	}
+	
+	@Test
+	public final void whenTitleInBodyWithoutEndTagisUsedThenProducesMinimalDOMPlusTitle() {
+		System.out
+				.print("\n~~~~ whenTitleInBodyWithoutEndTagisUsedThenProducesMinimalDOMPlusTitle ~~~~\n\n");
+		String inputString = titleInBodyWithoutEndTagGenerator(0);
+		serializedDoc = SerializeDocument(parser.parse(inputString));
+
+		assertTrue("Title DOM", serializedDoc.matches(TITLE_IN_BODY_DOM));
+	}
+	
+	@Test
+	public final void whenTitleInBodyWithoutEndTagAndTextAfterisUsedThenProducesMinimalDOMPlusTitle() {
+		System.out
+				.print("\n~~~~ whenTitleInBodyWithoutEndTagisUsedThenProducesMinimalDOMPlusTitle ~~~~\n\n");
+		String inputString = "<body><title></body>";
 		serializedDoc = SerializeDocument(parser.parse(inputString));
 
 		assertTrue("Title DOM", serializedDoc.matches(TITLE_IN_BODY_DOM));
@@ -180,6 +220,14 @@ public class ParserNewTest {
 		String inputString = emptyStringInsideTagGenerator(0, "<head>");
 		serializedDoc = SerializeDocument(parser.parse(inputString));
 	}
+	
+	@Test(expected = RuntimeException.class)
+	public final void whenTextAfterHtmlEndTagIsUsedThenExceptionIsThrown() {
+		System.out
+				.print("\n~~~~ whenTextAfterHtmlEndTagIsUsedThenExceptionIsThrown ~~~~\n\n");
+		String inputString = htmlHeadBodyGenerator(0, false) + latinLettersGenerator(0);
+		serializedDoc = SerializeDocument(parser.parse(inputString));
+	}
 
 	/******************
 	 * GENERATORS
@@ -228,6 +276,10 @@ public class ParserNewTest {
 	private String titleInHeadGenerator(int maxSize) {
 		return "<head>" + titleGenerator(0) + "</head>";
 	}
+	
+	private String titleInHeadWithoutEndTagGenerator(int maxSize) {
+		return "<head>" + titleGeneratorStartTag(0) ;
+	}
 
 	private String titleAfterHeadGenerator(int maxSize) {
 		return "<head/>" + titleGenerator(0);
@@ -236,11 +288,22 @@ public class ParserNewTest {
 	private String titleInBodyGenerator(int maxSize) {
 		return "<body>" + titleGenerator(0) + "</body>";
 	}
+	
+	private String titleInBodyWithoutEndTagGenerator(int maxSize) {
+		return "<body>" + titleGeneratorStartTag(0) + "</body>";
+	}
 
 	private String titleGenerator(int maxSize) {
 
 		String res = "";
 		res += "<title>" + latinLettersGenerator(maxSize) + "</title>";
+		return res;
+	}
+	
+	private String titleGeneratorStartTag(int maxSize) {
+
+		String res = "";
+		res += "<title>" + latinLettersGenerator(maxSize);
 		return res;
 	}
 
@@ -280,7 +343,7 @@ public class ParserNewTest {
 	private String latinLettersGenerator(int maxSize) {
 
 		String res = "";
-		char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+		char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTWXYZ".toCharArray();
 		Random randomGenerator = new Random();
 
 		// if (randomGenerator.nextBoolean())
